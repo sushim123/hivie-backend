@@ -1,4 +1,14 @@
+/**
+ * Custom error class for API errors.
+ * @extends Error
+ */
 class ApiError extends Error {
+  /**
+   * @param {number} statusCode - HTTP status code for the error.
+   * @param {string} [message='Something went wrong'] - Custom error message.
+   * @param {Array} [errors=[]] - Array of detailed error information.
+   * @param {string} [stack=''] - Optional custom stack trace.
+   */
   constructor(statusCode, message = 'Something went wrong', errors = [], stack = '') {
     super(message); // Initialize the Error with a message
     this.statusCode = statusCode; // HTTP status code
@@ -14,12 +24,4 @@ class ApiError extends Error {
   }
 }
 
-export {ApiError};
-
-//SYNTAX TO USE ERRORS:
-
-// throw new ApiError(
-//   400,
-//   'Invalid request parameters',
-//   [{ field: 'id', message: 'ID must be a positive integer'}],
-// );
+export { ApiError };
