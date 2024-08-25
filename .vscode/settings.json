@@ -1,0 +1,21 @@
+{
+    "editor.formatOnSave": true,
+    "files.trimTrailingWhitespace": true,
+    "editor.formatOnPaste": false,
+    "editor.formatOnType": false,
+    "files.insertFinalNewline": false,
+    "editor.renderWhitespace": "none", // Show whitespace characters
+    "git.enabled": true,
+    "git.autofetch": true,
+    "git.confirmSync": false,
+    "editor.codeLens": true,
+    "editor.snippetSuggestions": "inline",
+    "editor.bracketPairColorization.enabled": true,
+    "cSpell.words": [
+        "hivie",
+        "INSTA",
+        "oidc",
+        "resave"
+    ],
+    "javascript.preferences.importModuleSpecifierEnding": "js"
+}
