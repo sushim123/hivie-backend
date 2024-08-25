@@ -50,7 +50,7 @@ export const fetchDataByInstaAuth = async (req, res) => {
 export const getAuthInstaCode = asyncHandler(async (req, res) => {
   try {
     const params = new URLSearchParams({
-      client_id: '360330073785846',
+      client_id: process.env.INSTA_CLIENT_ID,
       redirect_uri: redirectUri,
       response_type: 'code',
       scope: 'user_profile,user_media'

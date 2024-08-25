@@ -57,14 +57,15 @@ app.set('view engine', 'ejs');
 
 // Import and use index routes
 import {isAuthenticated} from './middlewares/auth.middleware.js';
+import dropRoutes from './routes/drop.route.js';
 import indexRoutes from './routes/index.route.js';
 import instaRoutes from './routes/insta.routes.js';
 import {ApiError} from './utils/ApiError.util.js';
-
 // Use the imported routes
 
 app.use('/', indexRoutes);
 app.use('/api/v1/insta', instaRoutes);
+app.use('/api/v1/drops', dropRoutes);
 
 // 404 handler
 app.use((req, res, next) => {

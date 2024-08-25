@@ -20,12 +20,12 @@ export const isAuthenticated = asyncHandler(async (req, res, next) => {
   next(new ApiError(401, 'Please login', ['Unautherized']));
 });
 export const isInfluencer = (req, res, next) => {
-  if (req.user.role === 'influencer') return next();
+  if (req.user.role === 'influencer' || req.user.role === 'admin' ) return next();
   next(new ApiError(401, 'This is not for influencer', ['Unautherized']));
 };
 
 export const isBrand = (req, res, next) => {
-  if (req.user.role === 'brand') return next();
+  if (req.user.role === 'brand'|| req.user.role === 'admin') return next();
   next(new ApiError(401, 'This is only for brands', ['Unautherized']));
 };
 
