@@ -1,9 +1,9 @@
-import { Router } from 'express';
-import { isAuthenticated } from '../middlewares/auth.middleware.js';
-import { Drop } from '../models/drop.model.js';
-import { ApiError } from '../utils/ApiError.util.js';
-import { ApiResponse } from '../utils/ApiResponse.util.js';
-import { asyncHandler } from '../utils/asyncHandler.util.js';
+import {Router} from 'express';
+import {isAuthenticated} from '../middlewares/auth.middleware.js';
+import {Drop} from '../models/drop.model.js';
+import {ApiError} from '../utils/ApiError.util.js';
+import {ApiResponse} from '../utils/ApiResponse.util.js';
+import {asyncHandler} from '../utils/asyncHandler.util.js';
 
 const route = Router();
 
@@ -12,7 +12,7 @@ route.post(
   '/add-drop',
   asyncHandler(async (req, res, next) => {
     try {
-      const { brand_id, title, description, cover_image, payout, start_date, end_date, deliverables } = req.body;
+      const {brand_id, title, description, cover_image, payout, start_date, end_date, deliverables} = req.body;
 
       const newDrop = new Drop({
         brand_id,
@@ -24,7 +24,6 @@ route.post(
         end_date,
         deliverables
       });
-
       await newDrop.save();
       res.json(new ApiResponse(201, newDrop, 'Drop created successfully', true));
     } catch (error) {
@@ -33,20 +32,18 @@ route.post(
   })
 );
 
-// Route to update an existing drop by ID
 route.put(
   '/update-drop/:id',
   asyncHandler(async (req, res, next) => {
     try {
-      const { id } = req.params;
-      const updates = req.body; // Contains the fields to be updated
-
-      const updatedDrop = await Drop.findByIdAndUpdate(id, updates, { new: true });
-
+      const {id} = req.params;
+      const updates = req.body;
+      const updatedDrop = await Drop.findOneAndUpdate({$or: [{drop_id: id}, {_id: id}]}, updates, {
+        new: true
+      });
       if (!updatedDrop) {
         return next(new ApiError(404, 'Drop not found'));
       }
-
       res.json(new ApiResponse(200, updatedDrop, 'Drop updated successfully', true));
     } catch (error) {
       next(new ApiError(500, 'Failed to update drop', error));
@@ -54,18 +51,21 @@ route.put(
   })
 );
 
-// Route to get all drops
-route.get(
-  '/all-drops',
+route.delete(
+  'delete/:id',
+  isAuthenticated,
   asyncHandler(async (req, res, next) => {
     try {
-      const allDrops = await Drop.find({});
-      if (!allDrops.length) {
-        return next(new ApiError(404, 'No drop found'));
+      const {id} = req.params;
+      const drop = await Drop.findOneAndDelete({$or: [{drop_id: id}, {_id: id}]});
+
+      if (!drop) {
+        return next(new ApiError(404, 'Drop not found'));
       }
-      res.json(new ApiResponse(200, allDrops, 'All drops fetched successfully', true));
+
+      res.status(200).json(new ApiResponse(200, null, 'Drop deleted successfully', true));
     } catch (error) {
-      next(new ApiError(500, 'Failed to fetch drops', error));
+      next(new ApiError(500, 'Failed to delete drop', error));
     }
   })
 );
@@ -78,8 +78,8 @@ route.get(
       const currentDate = new Date();
 
       const activeDrops = await Drop.find({
-        start_date: { $lte: currentDate },
-        end_date: { $gte: currentDate }
+        start_date: {$lte: currentDate},
+        end_date: {$gte: currentDate}
       });
 
       if (!activeDrops.length) {
@@ -99,7 +99,7 @@ route.delete(
   isAuthenticated,
   asyncHandler(async (req, res, next) => {
     try {
-      const { drop_id } = req.params;
+      const {drop_id} = req.params;
       const drop = await Drop.findByIdAndDelete(drop_id);
 
       if (!drop) {
@@ -119,12 +119,12 @@ route.get(
   isAuthenticated,
   asyncHandler(async (req, res, next) => {
     try {
-      const { query, start_date, end_date } = req.query;
+      const {query, start_date, end_date} = req.query;
       const searchQuery = {
         $and: [
-          { title: new RegExp(query, 'i') },
-          { start_date: { $gte: new Date(start_date) } },
-          { end_date: { $lte: new Date(end_date) } }
+          {title: new RegExp(query, 'i')},
+          {start_date: {$gte: new Date(start_date)}},
+          {end_date: {$lte: new Date(end_date)}}
         ]
       };
 
@@ -142,8 +142,8 @@ route.get(
   isAuthenticated,
   asyncHandler(async (req, res, next) => {
     try {
-      const { page = 1, limit = 10, sort = 'start_date' } = req.query;
-      const drops = await Drop.paginate({}, { page, limit, sort });
+      const {page = 1, limit = 10, sort = 'start_date'} = req.query;
+      const drops = await Drop.paginate({}, {page, limit, sort});
       res.status(200).json(new ApiResponse(200, drops, 'Drops fetched successfully with pagination', true));
     } catch (error) {
       next(new ApiError(500, 'Failed to fetch drops with pagination', error));
@@ -159,10 +159,10 @@ route.get(
     try {
       const totalDrops = await Drop.countDocuments();
       const activeDrops = await Drop.countDocuments({
-        start_date: { $lte: new Date() },
-        end_date: { $gte: new Date() }
+        start_date: {$lte: new Date()},
+        end_date: {$gte: new Date()}
       });
-      const totalPayout = await Drop.aggregate([{ $group: { _id: null, total: { $sum: '$payout' } } }]);
+      const totalPayout = await Drop.aggregate([{$group: {_id: null, total: {$sum: '$payout'}}}]);
       const stats = {
         totalDrops,
         activeDrops,
@@ -181,10 +181,10 @@ route.patch(
   isAuthenticated,
   asyncHandler(async (req, res, next) => {
     try {
-      const { drop_id } = req.params;
-      const { status } = req.body;
+      const {drop_id} = req.params;
+      const {status} = req.body;
 
-      const drop = await Drop.findByIdAndUpdate(drop_id, { status }, { new: true });
+      const drop = await Drop.findByIdAndUpdate(drop_id, {status}, {new: true});
 
       if (!drop) {
         return next(new ApiError(404, 'Drop not found'));

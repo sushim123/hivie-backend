@@ -1,5 +1,6 @@
 import mongoose from 'mongoose';
 import mongooseAggregatePaginate from 'mongoose-aggregate-paginate-v2';
+import {v4 as uuidv4} from 'uuid';
 
 const {Schema} = mongoose;
 
@@ -30,13 +31,13 @@ const DeliverableSchema = new Schema({
     validate: {
       validator: function (value) {
         if (this.deliverable_type === 'reel') {
-          return ReelSchema.requiredPaths().every((path) => value[path]);
+          return ReelSchema.requiredPaths().every((path) => value[path] != null);
         } else if (this.deliverable_type === 'post') {
-          return PostSchema.requiredPaths().every((path) => value[path]);
+          return PostSchema.requiredPaths().every((path) => value[path] != null);
         }
         return false;
       },
-      message: (props) => `${props.value} does not match the schema for the selected deliverable type`
+      message: (props) => `Details do not match the schema for the selected deliverable type: ${props.value}`
     }
   }
 });
@@ -44,7 +45,12 @@ const DeliverableSchema = new Schema({
 // Drop Schema with embedded Deliverables
 const dropSchema = new mongoose.Schema(
   {
-    drop_id: {type: String, required: true, unique: true, default: () => uuidv4()}, // Generates a unique identifier using UUID},
+    drop_id: {
+      type: String,
+      required: true,
+      unique: true,
+      default: () => uuidv4() // Generates a unique identifier using UUID
+    },
     brand_id: {type: mongoose.Schema.Types.ObjectId, ref: 'Brand', required: true},
     title: {type: String, required: [true, 'Title is required']},
     description: {type: String, required: [true, 'Description is required']},
