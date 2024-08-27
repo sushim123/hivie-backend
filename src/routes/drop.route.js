@@ -31,7 +31,7 @@ route.post(
     }
   })
 );
-
+// Route to update the drop.
 route.put(
   '/update-drop/:id',
   asyncHandler(async (req, res, next) => {
@@ -50,7 +50,7 @@ route.put(
     }
   })
 );
-
+//route to delete the drop
 route.delete(
   'delete/:id',
   isAuthenticated,
@@ -93,60 +93,19 @@ route.get(
   })
 );
 
-// DELETE /api/v1/drops/:drop_id
-route.delete(
-  '/:drop_id',
-  isAuthenticated,
+//get all drops in db
+route.get(
+  '/all-drops',
   asyncHandler(async (req, res, next) => {
     try {
-      const {drop_id} = req.params;
-      const drop = await Drop.findByIdAndDelete(drop_id);
-
-      if (!drop) {
-        return next(new ApiError(404, 'Drop not found'));
+      const currentDate = new Date();
+      const activeDrops = await Drop.find({});
+      if (!activeDrops.length) {
+        return next(new ApiError(404, 'No active drops found'));
       }
-
-      res.status(200).json(new ApiResponse(200, null, 'Drop deleted successfully', true));
+      res.json(new ApiResponse(200, activeDrops, 'Active drops fetched successfully', true));
     } catch (error) {
-      next(new ApiError(500, 'Failed to delete drop', error));
-    }
-  })
-);
-
-// GET /api/v1/drops/search
-route.get(
-  '/search',
-  isAuthenticated,
-  asyncHandler(async (req, res, next) => {
-    try {
-      const {query, start_date, end_date} = req.query;
-      const searchQuery = {
-        $and: [
-          {title: new RegExp(query, 'i')},
-          {start_date: {$gte: new Date(start_date)}},
-          {end_date: {$lte: new Date(end_date)}}
-        ]
-      };
-
-      const drops = await Drop.find(searchQuery);
-      res.status(200).json(new ApiResponse(200, drops, 'Search results fetched successfully', true));
-    } catch (error) {
-      next(new ApiError(500, 'Failed to search drops', error));
-    }
-  })
-);
-
-// GET /api/v1/drops
-route.get(
-  '/',
-  isAuthenticated,
-  asyncHandler(async (req, res, next) => {
-    try {
-      const {page = 1, limit = 10, sort = 'start_date'} = req.query;
-      const drops = await Drop.paginate({}, {page, limit, sort});
-      res.status(200).json(new ApiResponse(200, drops, 'Drops fetched successfully with pagination', true));
-    } catch (error) {
-      next(new ApiError(500, 'Failed to fetch drops with pagination', error));
+      next(new ApiError(500, 'Failed to fetch active drops', error));
     }
   })
 );
@@ -154,7 +113,6 @@ route.get(
 // GET /api/v1/drops/stats
 route.get(
   '/stats',
-  isAuthenticated,
   asyncHandler(async (req, res, next) => {
     try {
       const totalDrops = await Drop.countDocuments();
@@ -175,24 +133,39 @@ route.get(
   })
 );
 
-// PATCH /api/v1/drops/:drop_id/status
-route.patch(
-  '/:drop_id/status',
-  isAuthenticated,
+// GET /api/v1/drops/search
+route.get(
+  '/search',
   asyncHandler(async (req, res, next) => {
     try {
-      const {drop_id} = req.params;
-      const {status} = req.body;
+      const {query, start_date, end_date} = req.query;
 
-      const drop = await Drop.findByIdAndUpdate(drop_id, {status}, {new: true});
+      // Convert start_date to start of the day (00:00:00.000Z) in ISO format
+      const startDate = start_date ? new Date(`${start_date}T00:00:00.000Z`) : undefined;
 
-      if (!drop) {
-        return next(new ApiError(404, 'Drop not found'));
-      }
+      // Convert end_date to end of the day (23:59:59.999Z) in ISO format
+      const endDate = end_date ? new Date(`${end_date}T23:59:59.999Z`) : undefined;
 
-      res.status(200).json(new ApiResponse(200, drop, 'Drop status updated successfully', true));
+      // Build the search query
+      const searchQuery = {
+        $and: [
+          {
+            $or: [
+              {title: {$regex: query, $options: 'i'}},
+              {description: {$regex: query, $options: 'i'}},
+              {'deliverables.deliverable_type': {$regex: query, $options: 'i'}},
+              {'deliverables.details.title': {$regex: query, $options: 'i'}}
+            ]
+          },
+          startDate ? {start_date: {$gte: startDate}} : {},
+          endDate ? {end_date: {$lte: endDate}} : {}
+        ].filter(Boolean) // Remove empty conditions
+      };
+
+      const drops = await Drop.find(searchQuery);
+      res.status(200).json(new ApiResponse(200, drops, 'Search results fetched successfully', true));
     } catch (error) {
-      next(new ApiError(500, 'Failed to update drop status', error));
+      next(new ApiError(500, 'Failed to search drops', error));
     }
   })
 );
