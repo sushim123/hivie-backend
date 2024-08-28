@@ -1,5 +1,5 @@
 import axios from 'axios';
-import {ApiError} from '../utils/ApiError.util.js';
+import {apiError} from '../utils/apiError.util.js';
 
 const accessToken = process.env.INSTAGRAM_ACCESS_TOKEN;
 
@@ -14,7 +14,7 @@ export const getUserInfo = async (accessToken) => {
     });
     return response.data;
   } catch (error) {
-    throw new ApiError(error.status, 'Error fetching user data', [error.message]);
+    throw new apiError(error.status, 'Error fetching user data', [error.message]);
   }
 };
 
@@ -30,7 +30,7 @@ export const getBusinessDiscovery = async (username) => {
     });
     return response.data.business_discovery;
   } catch (error) {
-    throw new ApiError(error.status, 'Error fetching business discovery info', error.message, false);
+    throw new apiError(error.status, 'Error fetching business discovery info', error.message, false);
   }
 };
 // Function to calculate metrics
@@ -44,7 +44,7 @@ export const calculateMetrics = (businessInfo) => {
     totalComments = businessInfo.media.data.reduce((acc, media) => acc + (media.comments_count || 0), 0);
     numberOfPosts = businessInfo.media.data.length;
   } else {
-    throw new ApiError(502, 'Unable To Fetch Media Data', error.message, false);
+    throw new apiError(502, 'Unable To Fetch Media Data', error.message, false);
   }
 
   const averageLikes = numberOfPosts > 0 ? totalLikes / numberOfPosts : 0;

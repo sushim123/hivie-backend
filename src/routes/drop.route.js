@@ -1,15 +1,15 @@
 import {Router} from 'express';
 import {isAuthenticated} from '../middlewares/auth.middleware.js';
 import {Drop} from '../models/drop.model.js';
-import {ApiError} from '../utils/ApiError.util.js';
-import {ApiResponse} from '../utils/ApiResponse.util.js';
+import {apiError} from '../utils/apiError.util.js';
+import {apiResponse} from '../utils/apiResponse.util.js';
 import {asyncHandler} from '../utils/asyncHandler.util.js';
 
 const route = Router();
 
 // Route to add a new drop
 route.post(
-  '/add-drop',
+  '/',
   asyncHandler(async (req, res, next) => {
     try {
       const {brand_id, title, description, cover_image, payout, start_date, end_date, deliverables} = req.body;
@@ -25,15 +25,15 @@ route.post(
         deliverables
       });
       await newDrop.save();
-      res.json(new ApiResponse(201, newDrop, 'Drop created successfully', true));
+      res.json(new apiResponse(201, newDrop, 'Drop created successfully', true));
     } catch (error) {
-      next(new ApiError(500, 'Failed to create drop', error));
+      next(new apiError(500, 'Failed to create drop', error));
     }
   })
 );
 // Route to update the drop.
 route.put(
-  '/update-drop/:id',
+  '/:id',
   asyncHandler(async (req, res, next) => {
     try {
       const {id} = req.params;
@@ -42,30 +42,30 @@ route.put(
         new: true
       });
       if (!updatedDrop) {
-        return next(new ApiError(404, 'Drop not found'));
+        return next(new apiError(404, 'Drop not found'));
       }
-      res.json(new ApiResponse(200, updatedDrop, 'Drop updated successfully', true));
+      res.json(new apiResponse(200, updatedDrop, 'Drop updated successfully', true));
     } catch (error) {
-      next(new ApiError(500, 'Failed to update drop', error));
+      next(new apiError(500, 'Failed to update drop', error));
     }
   })
 );
 //route to delete the drop
 route.delete(
-  'delete/:id',
-  isAuthenticated,
+  '/:id',
+  // isAuthenticated,
   asyncHandler(async (req, res, next) => {
     try {
       const {id} = req.params;
       const drop = await Drop.findOneAndDelete({$or: [{drop_id: id}, {_id: id}]});
 
       if (!drop) {
-        return next(new ApiError(404, 'Drop not found'));
+        return next(new apiError(404, 'Drop not found'));
       }
 
-      res.status(200).json(new ApiResponse(200, null, 'Drop deleted successfully', true));
+      res.status(200).json(new apiResponse(200, null, 'Drop deleted successfully', true));
     } catch (error) {
-      next(new ApiError(500, 'Failed to delete drop', error));
+      next(new apiError(500, 'Failed to delete drop', error));
     }
   })
 );
@@ -83,29 +83,29 @@ route.get(
       });
 
       if (!activeDrops.length) {
-        return next(new ApiError(404, 'No active drops found'));
+        return next(new apiError(404, 'No active drops found'));
       }
 
-      res.json(new ApiResponse(200, activeDrops, 'Active drops fetched successfully', true));
+      res.json(new apiResponse(200, activeDrops, 'Active drops fetched successfully', true));
     } catch (error) {
-      next(new ApiError(500, 'Failed to fetch active drops', error));
+      next(new apiError(500, 'Failed to fetch active drops', error));
     }
   })
 );
 
 //get all drops in db
 route.get(
-  '/all-drops',
+  '/',
   asyncHandler(async (req, res, next) => {
     try {
       const currentDate = new Date();
       const activeDrops = await Drop.find({});
       if (!activeDrops.length) {
-        return next(new ApiError(404, 'No active drops found'));
+        return next(new apiError(404, 'No active drops found'));
       }
-      res.json(new ApiResponse(200, activeDrops, 'Active drops fetched successfully', true));
+      res.json(new apiResponse(200, activeDrops, 'Active drops fetched successfully', true));
     } catch (error) {
-      next(new ApiError(500, 'Failed to fetch active drops', error));
+      next(new apiError(500, 'Failed to fetch active drops', error));
     }
   })
 );
@@ -126,9 +126,9 @@ route.get(
         activeDrops,
         totalPayout: totalPayout[0]?.total || 0
       };
-      res.status(200).json(new ApiResponse(200, stats, 'Drop stats fetched successfully', true));
+      res.status(200).json(new apiResponse(200, stats, 'Drop stats fetched successfully', true));
     } catch (error) {
-      next(new ApiError(500, 'Failed to fetch drop stats', error));
+      next(new apiError(500, 'Failed to fetch drop stats', error));
     }
   })
 );
@@ -163,9 +163,9 @@ route.get(
       };
 
       const drops = await Drop.find(searchQuery);
-      res.status(200).json(new ApiResponse(200, drops, 'Search results fetched successfully', true));
+      res.status(200).json(new apiResponse(200, drops, 'Search results fetched successfully', true));
     } catch (error) {
-      next(new ApiError(500, 'Failed to search drops', error));
+      next(new apiError(500, 'Failed to search drops', error));
     }
   })
 );

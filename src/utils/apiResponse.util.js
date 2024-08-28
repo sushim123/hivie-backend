@@ -1,6 +1,6 @@
-// Define the ApiResponse class to standardize API responses
-class ApiResponse {
-  // Constructor method to initialize the ApiResponse object
+// Define the apiResponse class to standardize API responses
+class apiResponse {
+  // Constructor method to initialize the apiResponse object
   constructor(statusCode, data, message = 'Success') {
     this.statusCode = statusCode; // The HTTP status code of the response
     this.data = data; // The data payload of the response, can be any type
@@ -9,7 +9,7 @@ class ApiResponse {
   }
 }
 
-export {ApiResponse};
+export {apiResponse};
 
 // Example usage:
-// res.send(new ApiResponse(200, response, "Token fetched successfully"));
+// res.send(new apiResponse(200, response, "Token fetched successfully"));

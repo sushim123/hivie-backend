@@ -56,23 +56,24 @@ app.set('view engine', 'ejs');
 // Routes
 
 // Import and use index routes
-import {isAuthenticated} from './middlewares/auth.middleware.js';
 import dropRoutes from './routes/drop.route.js';
+import dropLinkRoutes from './routes/dropLink.route.js';
 import indexRoutes from './routes/index.route.js';
 import instaRoutes from './routes/insta.routes.js';
-import {ApiError} from './utils/ApiError.util.js';
+import {apiError} from './utils/apiError.util.js';
 // Use the imported routes
 
 app.use('/', indexRoutes);
 app.use('/api/v1/insta', instaRoutes);
 app.use('/api/v1/drops', dropRoutes);
+app.use('/api/v1/drop-link', dropLinkRoutes);
 
 // 404 handler
 app.use((req, res, next) => {
   const errorMessage = `404 Error: The requested URL ${req.originalUrl} was not found on this server.`;
-  // Create an ApiError object for the 404 error
-  const apiError = new ApiError(404, errorMessage);
-  next(apiError);
+  // Create an apiError object for the 404 error
+  const newError = new apiError(404, errorMessage);
+  next(newError);
 });
 
 // Error handling middleware
@@ -80,8 +81,8 @@ app.use((err, req, res, next) => {
   console.error(`Error: ${err.message}`);
   console.error(`Stack Trace: ${err.stack}`);
 
-  if (err instanceof ApiError) {
-    // If the error is an instance of ApiError, use its details to construct the response
+  if (err instanceof apiError) {
+    // If the error is an instance of apiError, use its details to construct the response
     res.status(err.statusCode).json({
       success: err.success,
       message: err.message,
@@ -90,7 +91,7 @@ app.use((err, req, res, next) => {
     });
   } else {
     // For generic errors, return a 500 Internal Server Error
-    const genericError = new ApiError(500, 'Internal Server Error');
+    const genericError = new apiError(500, 'Internal Server Error');
     res.status(500).json({
       success: genericError.success,
       message: genericError.message,

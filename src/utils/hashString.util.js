@@ -8,6 +8,6 @@ export async function hashString(plainText) {
     const hashedKey = await bcrypt.hash(plainText, salt);
     return hashedKey;
   } catch (error) {
-    throw new ApiError(500,'Failed to hash string',[error.message]);
+    throw new apiError(500, 'Failed to hash string', [error.message]);
   }
 }

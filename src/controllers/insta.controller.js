@@ -1,8 +1,8 @@
 import axios from 'axios';
 import dotenv from 'dotenv'; // Loads environment variables from a .env file
 import {calculateMetrics, getBusinessDiscovery, getUserInfo} from '../helpers/instagram.helper.js';
-import {ApiError} from '../utils/ApiError.util.js';
-import {ApiResponse} from '../utils/ApiResponse.util.js';
+import {apiError} from '../utils/apiError.util.js';
+import {apiResponse} from '../utils/apiResponse.util.js';
 import {asyncHandler} from '../utils/asyncHandler.util.js';
 dotenv.config({path: './.env'});
 
@@ -59,7 +59,7 @@ export const getAuthInstaCode = asyncHandler(async (req, res) => {
     const authUrl = `https://api.instagram.com/oauth/authorize?${params.toString()}`;
     res.redirect(authUrl);
   } catch (error) {
-    res.status(400).json(new ApiError(400, 'code not found', error.message));
+    res.status(400).json(new apiError(400, 'code not found', error.message));
   }
 });
 
@@ -75,13 +75,13 @@ export const fetchDataByUsername = async (req, res) => {
         metrics
       };
 
-      res.status(200).json(new ApiResponse(200, responseData, `User's data fetched successfully.`, true));
+      res.status(200).json(new apiResponse(200, responseData, `User's data fetched successfully.`, true));
     } catch (error) {
       res
         .status(400)
-        .json(new ApiError(400, 'Error fetching data.', error.response ? error.response.data : error.message));
+        .json(new apiError(400, 'Error fetching data.', error.response ? error.response.data : error.message));
     }
   } else {
-    res.status(502).json(new ApiError(502, 'Please provide username ', 'username not found'));
+    res.status(502).json(new apiError(502, 'Please provide username ', 'username not found'));
   }
 };

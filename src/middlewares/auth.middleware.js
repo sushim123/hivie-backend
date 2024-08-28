@@ -1,12 +1,12 @@
-import { User } from '../models/user.model.js';
-import { ApiError } from '../utils/ApiError.util.js';
-import { asyncHandler } from '../utils/asyncHandler.util.js';
+import {User} from '../models/user.model.js';
+import {apiError} from '../utils/apiError.util.js';
+import {asyncHandler} from '../utils/asyncHandler.util.js';
 
 // Middleware to check authentication and create user if not exists
 export const isAuthenticated = asyncHandler(async (req, res, next) => {
   if (req.oidc.isAuthenticated()) {
-    const { email } = req.oidc.user;
-    let user = await User.findOne({ email });
+    const {email} = req.oidc.user;
+    let user = await User.findOne({email});
 
     if (!user) {
       user = new User(req.oidc.user);
@@ -18,7 +18,7 @@ export const isAuthenticated = asyncHandler(async (req, res, next) => {
   }
 
   // Unauthorized access
-  next(new ApiError(401, 'Please login', ['Unauthorized']));
+  next(new apiError(401, 'Please login', ['Unauthorized']));
 });
 
 // Middleware to check if user is an influencer or admin
@@ -28,7 +28,7 @@ export const isInfluencer = (req, res, next) => {
   }
 
   // Unauthorized access
-  next(new ApiError(401, 'This is not for influencers', ['Unauthorized']));
+  next(new apiError(401, 'This is not for influencers', ['Unauthorized']));
 };
 
 // Middleware to check if user is a brand or admin
@@ -38,7 +38,7 @@ export const isBrand = (req, res, next) => {
   }
 
   // Unauthorized access
-  next(new ApiError(401, 'This is only for brands', ['Unauthorized']));
+  next(new apiError(401, 'This is only for brands', ['Unauthorized']));
 };
 
 // Middleware to check if user is an admin
@@ -48,5 +48,5 @@ export const isAdmin = (req, res, next) => {
   }
 
   // Unauthorized access
-  next(new ApiError(401, 'This is only for admins', ['Unauthorized']));
+  next(new apiError(401, 'This is only for admins', ['Unauthorized']));
 };

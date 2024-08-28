@@ -2,7 +2,7 @@
  * Custom error class for API errors.
  * @extends Error
  */
-class ApiError extends Error {
+class apiError extends Error {
   /**
    * @param {number} statusCode - HTTP status code for the error.
    * @param {string} [message='Something went wrong'] - Custom error message.
@@ -24,4 +24,4 @@ class ApiError extends Error {
   }
 }
 
-export { ApiError };
+export {apiError};
