@@ -1,0 +1,2 @@
+export const API_INSTAGRAM_GRAPH = 'https://graph.facebook.com/v20.0/17841468546353221';
+export const OPTIONS_INSTAGRAM = "{id,username,name,profile_picture_url,followers_count,follows_count,media_count,media{id,caption,media_type,media_url,thumbnail_url,permalink,timestamp,like_count,comments_count}"

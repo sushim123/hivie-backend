@@ -1,5 +1,6 @@
 import axios from 'axios';
 import {apiError} from '../utils/apiError.util.js';
+import { API_INSTAGRAM_GRAPH, OPTIONS_INSTAGRAM } from '../constants.js';
 
 const accessToken = process.env.INSTAGRAM_ACCESS_TOKEN;
 
@@ -22,9 +23,9 @@ export const getUserInfo = async (accessToken) => {
 export const getBusinessDiscovery = async (username) => {
   try {
     const encodedUsername = encodeURIComponent(username);
-    const response = await axios.get(`https://graph.facebook.com/v20.0/17841468546353221`, {
+    const response = await axios.get(API_INSTAGRAM_GRAPH, {
       params: {
-        fields: `business_discovery.username(${encodedUsername}){id,username,name,profile_picture_url,followers_count,follows_count,media_count,media{id,caption,media_type,media_url,thumbnail_url,permalink,timestamp,like_count,comments_count}}`,
+        fields: `business_discovery.username(${encodedUsername})${OPTIONS_INSTAGRAM}}`,
         access_token: accessToken
       }
     });
