@@ -1,3 +1,4 @@
+import { STATUS_CODES } from 'http';
 import {User} from '../models/user.model.js';
 import {apiError} from '../utils/apiError.util.js';
 import {asyncHandler} from '../utils/asyncHandler.util.js';
@@ -18,7 +19,7 @@ export const isAuthenticated = asyncHandler(async (req, res, next) => {
   }
 
   // Unauthorized access
-  next(new apiError(401, 'Please login', ['Unauthorized']));
+  next(new apiError(STATUS_CODES.UNAUTHORIZED, 'Please login', ['Unauthorized']));
 });
 
 // Middleware to check if user is an influencer or admin
@@ -28,7 +29,7 @@ export const isInfluencer = (req, res, next) => {
   }
 
   // Unauthorized access
-  next(new apiError(401, 'This is not for influencers', ['Unauthorized']));
+  next(new apiError(401, 'This is not for influences', ['Unauthorized']));
 };
 
 // Middleware to check if user is a brand or admin

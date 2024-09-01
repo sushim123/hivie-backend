@@ -1,13 +1,14 @@
 import axios from 'axios';
 import {apiError} from '../utils/apiError.util.js';
-import { API_INSTAGRAM_GRAPH, OPTIONS_INSTAGRAM } from '../constants.js';
-
-const accessToken = process.env.INSTAGRAM_ACCESS_TOKEN;
+import { API_INSTA_GRAPH, INSTA_GRAPH_URL, OPTIONS_INSTA } from '../constants.js';
+import InstagramData from '../models/instagramData.model.js';
+import { STATUS_CODES } from 'http';
+const accessToken = process.env.INSTA_ACCESS_TOKEN;
 
 // Function to get user info
 export const getUserInfo = async (accessToken) => {
   try {
-    const response = await axios.get('https://graph.instagram.com/me', {
+    const response = await axios.get(`${INSTA_GRAPH_URL}`, {
       params: {
         fields: 'id,username',
         access_token: accessToken
@@ -23,12 +24,13 @@ export const getUserInfo = async (accessToken) => {
 export const getBusinessDiscovery = async (username) => {
   try {
     const encodedUsername = encodeURIComponent(username);
-    const response = await axios.get(API_INSTAGRAM_GRAPH, {
+    const response = await axios.get(API_INSTA_GRAPH, {
       params: {
-        fields: `business_discovery.username(${encodedUsername})${OPTIONS_INSTAGRAM}}`,
+        fields: `business_discovery.username(${encodedUsername})${OPTIONS_INSTA}}`,
         access_token: accessToken
       }
     });
+    console.log(data.business_discovery);
     return response.data.business_discovery;
   } catch (error) {
     throw new apiError(error.status, 'Error fetching business discovery info', error.message, false);
@@ -45,7 +47,7 @@ export const calculateMetrics = (businessInfo) => {
     totalComments = businessInfo.media.data.reduce((acc, media) => acc + (media.comments_count || 0), 0);
     numberOfPosts = businessInfo.media.data.length;
   } else {
-    throw new apiError(502, 'Unable To Fetch Media Data', error.message, false);
+    throw new apiError(STATUS_CODES.BAD_GATEWAY, 'Unable To Fetch Media Data', error);
   }
 
   const averageLikes = numberOfPosts > 0 ? totalLikes / numberOfPosts : 0;

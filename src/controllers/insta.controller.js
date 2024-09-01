@@ -1,12 +1,12 @@
 import axios from 'axios';
 import dotenv from 'dotenv'; // Loads environment variables from a .env file
+import {INSTA_URL, REDIRECT_URL} from '../constants.js';
 import {calculateMetrics, getBusinessDiscovery, getUserInfo} from '../helpers/instagram.helper.js';
 import {apiError} from '../utils/apiError.util.js';
 import {apiResponse} from '../utils/apiResponse.util.js';
 import {asyncHandler} from '../utils/asyncHandler.util.js';
+import { STATUS_CODES } from 'http';
 dotenv.config({path: './.env'});
-
-const redirectUri = 'https://localhost:4000/api/v1/insta/auth/callback';
 
 export const fetchDataByInstaAuth = async (req, res) => {
   const authCode = req.query.code;
@@ -16,34 +16,19 @@ export const fetchDataByInstaAuth = async (req, res) => {
         client_id: process.env.INSTA_CLIENT_ID,
         client_secret: process.env.INSTA_CLIENT_SECRET,
         grant_type: 'authorization_code',
-        redirect_uri: redirectUri,
+        redirect_uri: REDIRECT_URL,
         code: authCode
       });
-      const tokenResponse = await axios.post('https://api.instagram.com/oauth/access_token', params);
-      const accessToken = tokenResponse.data.access_token;
+      const tokenResponse = await axios.post(`${INSTA_URL}/access_token`, params);
+      const userInfo = await getUserInfo(tokenResponse.data.access_token);
+      const businessInfo = await getBusinessDiscovery(userInfo.username);
 
-      const userInfo = await getUserInfo(accessToken);
-      const username = userInfo.username;
-      const businessInfo = await getBusinessDiscovery(username);
-
-      const responseData = {
-        accessToken,
-        userInfo,
-        businessInfo
-      };
-      res.json(responseData);
+      res.status(STATUS_CODES.OK).json(new apiResponse(STATUS_CODES.OK,{accessToken, userInfo, businessInfo},'All date fetched successfully.'));
     } catch (error) {
-      console.error(
-        'Error during authorization or fetching data:',
-        error.response ? error.response.data : error.message
-      );
-      res.status(500).json({
-        error: 'Error during authorization or fetching data.',
-        details: error.response ? error.response.data : error.message
-      });
+      throw new apiError(STATUS_CODES.METHOD_NOT_ALLOWED, 'Error fetching data.', error);
     }
   } else {
-    res.status(400).json({error: 'Authorization failed or was denied.'});
+    throw new apiError(STATUS_CODES.UNAUTHORIZED,'Authentication failed',error);
   }
 };
 
@@ -51,15 +36,14 @@ export const getAuthInstaCode = asyncHandler(async (req, res) => {
   try {
     const params = new URLSearchParams({
       client_id: process.env.INSTA_CLIENT_ID,
-      redirect_uri: redirectUri,
+      redirect_uri: REDIRECT_URL,
       response_type: 'code',
       scope: 'user_profile,user_media'
     });
 
-    const authUrl = `https://api.instagram.com/oauth/authorize?${params.toString()}`;
-    res.redirect(authUrl);
+    res.redirect(`${INSTA_URL}/authorize?${params.toString()}`);
   } catch (error) {
-    res.status(400).json(new apiError(400, 'code not found', error.message));
+    throw new apiError(STATUS_CODES.BAD_REQUEST,'Code not found',error)
   }
 });
 
@@ -74,14 +58,11 @@ export const fetchDataByUsername = async (req, res) => {
         businessInfo,
         metrics
       };
-
-      res.status(200).json(new apiResponse(200, responseData, `User's data fetched successfully.`, true));
+      res.status(STATUS_CODES.OK).json(new apiResponse(STATUS_CODES.OK, responseData, `User's data fetched successfully.`));
     } catch (error) {
-      res
-        .status(400)
-        .json(new apiError(400, 'Error fetching data.', error.response ? error.response.data : error.message));
+      new apiError(STATUS_CODES.METHOD_NOT_ALLOWED, 'Error fetching data.', error);
     }
   } else {
-    res.status(502).json(new apiError(502, 'Please provide username ', 'username not found'));
+    res.status(STATUS_CODES.BAD_REQUEST).json(new apiError(STATUS_CODES.BAD_REQUEST, 'Please provide username ', 'username not found'));
   }
 };
