@@ -1,8 +1,8 @@
 import axios from 'axios';
-import {apiError} from '../utils/apiError.util.js';
-import { API_INSTA_GRAPH, INSTA_GRAPH_URL, OPTIONS_INSTA } from '../constants.js';
+import {STATUS_CODES} from '../constants.js';
+import {API_INSTA_GRAPH, INSTA_GRAPH_URL, OPTIONS_INSTA} from '../constants.js';
 import InstagramData from '../models/instagramData.model.js';
-import { STATUS_CODES } from 'http';
+import {apiError} from '../utils/apiError.util.js';
 const accessToken = process.env.INSTA_ACCESS_TOKEN;
 
 // Function to get user info

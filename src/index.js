@@ -10,7 +10,7 @@ import morgan from 'morgan'; // HTTP request logger middleware
 import {dirname, join} from 'path'; // Utilities for handling file paths
 import {fileURLToPath} from 'url'; // Converts a file URL to a path
 import './configs/db.config.js'; // Connect to the MongoDB database
-import {config} from './configs/oAuth.config.js'; // OAuth configuration
+import {OAUTH_CONFIG} from './configs/global.config.js'; // OAuth configuration
 dotenv.config({path: './.env'}); // Load environment variables
 
 const app = express(); // Create an Express application
@@ -24,7 +24,7 @@ app.use(express.json());
 app.use(express.urlencoded({extended: true}));
 app.use(express.static('public'));
 app.use(session({secret: process.env.SECRET, resave: false, saveUninitialized: false}));
-app.use(auth(config));
+app.use(auth(OAUTH_CONFIG));
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -36,7 +36,6 @@ import dropRoutes from './routes/drop.route.js';
 import dropLinkRoutes from './routes/dropLink.route.js';
 import indexRoutes from './routes/index.route.js';
 import instaRoutes from './routes/insta.routes.js';
-import {apiError} from './utils/apiError.util.js';
 import { errorHandler, notFoundError } from './middlewares/error.middleware.js';
 // Use the imported routes
 
@@ -50,5 +49,5 @@ app.use(errorHandler);
 
 // Start the server
 http.createServer(app).listen(port, () => {
-  console.log(`Server running on ${config.baseURL}`); // Log the server URL to the console
+  console.log(`Server running on ${process.env.BASE_URL}`); // Log the server URL to the console
 });

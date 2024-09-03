@@ -3,6 +3,7 @@ import dropLink from '../models/dropLink.model.js';
 import {apiError} from '../utils/apiError.util.js';
 import {apiResponse} from '../utils/apiResponse.util.js';
 import {asyncHandler} from '../utils/asyncHandler.util.js';
+import { STATUS_CODES } from '../constants.js';
 
 const route = Router();
 
@@ -11,8 +12,6 @@ route.post(
   asyncHandler(async (req, res, next) => {
     try {
       const { drop_id, brand_id, deliverables, user_id } = req.body;
-
-      // Attempt to create and save the new drop link
       const newDropLink = new dropLink({
         drop_id,
         brand_id,
@@ -20,13 +19,12 @@ route.post(
         user_id,
       });
       await newDropLink.save();
-
-      res.status(201).json(new apiResponse(201, newDropLink, 'Drop link saved successfully', true));
+      res.status(STATUS_CODES.CREATED).json(new apiResponse(STATUS_CODES.CREATED, newDropLink, 'Drop link saved successfully', true));
     } catch (error) {
-      if (error.code === 11000) { // Duplicate key error code
-        return next(new apiError(400, 'Duplicate drop link entry'));
+      if (error.code === DUPLICATE_ERROR_CODE) { // Duplicate key error code
+        return next(new apiError(STATUS_CODES.CONFLICT, 'Duplicate drop link entry'));
       }
-      next(new apiError(500, 'Failed to save drop link', error));
+      next(new apiError(STATUS_CODES.BAD_REQUEST, 'Failed to save drop link', error));
     }
   })
 );
@@ -39,11 +37,11 @@ route.get(
     try {
       const newDropLink = await dropLink.find();
       if (!newDropLink) {
-        return next(new apiError(404, 'Drop link not found'));
+        return next(new apiError(STATUS_CODES.NOT_FOUND, 'Drop link not found'));
       }
-      res.status(200).json(new apiResponse(200, newDropLink, 'Drop link fetched successfully'));
+      res.status(STATUS_CODES.OK).json(new apiResponse(STATUS_CODES.OK, newDropLink, 'Drop link fetched successfully'));
     } catch (error) {
-      next(new apiError(500, 'Failed to fetch drop link', error));
+      next(new apiError(STATUS_CODES.BAD_REQUEST, 'Failed to fetch drop link', error));
     }
   })
 );
@@ -54,11 +52,11 @@ route.get(
     try {
       const newDropLink = await dropLink.findById(req.params.id);
       if (!newDropLink) {
-        return next(new apiError(404, 'Drop link not found'));
+        return next(new apiError(STATUS_CODES.NOT_FOUND, 'Drop link not found'));
       }
-      res.status(200).json(new apiResponse(200, newDropLink, 'Drop link fetched successfully', true));
+      res.status(STATUS_CODES.OK).json(new apiResponse(STATUS_CODES.OK, newDropLink, 'Drop link fetched successfully', true));
     } catch (error) {
-      next(new apiError(500, 'Failed to fetch drop link', error));
+      next(new apiError(STATUS_CODES.BAD_REQUEST, 'Failed to fetch drop link', error));
     }
   })
 );
@@ -76,11 +74,11 @@ route.put(
         runValidators: true
       });
       if (!updatedDropLink) {
-        return next(new apiError(404, 'Drop link not found'));
+        return next(new apiError(STATUS_CODES.NOT_FOUND, 'Drop link not found'));
       }
-      res.status(200).json(new apiResponse(200, updatedDropLink, 'Drop link updated successfully', true));
+      res.status(STATUS_CODES.OK).json(new apiResponse(STATUS_CODES.OK, updatedDropLink, 'Drop link updated successfully', true));
     } catch (error) {
-      next(new apiError(500, 'Failed to update drop link', error));
+      next(new apiError(STATUS_CODES.BAD_REQUEST, 'Failed to update drop link', error));
     }
   })
 );
@@ -92,11 +90,11 @@ route.delete(
     try {
       const deletedDropLink = await dropLink.findByIdAndDelete(req.params.id);
       if (!deletedDropLink) {
-        return next(new apiError(404, 'Drop link not found'));
+        return next(new apiError(STATUS_CODES.NOT_FOUND, 'Drop link not found'));
       }
-      res.status(200).json(new apiResponse(200, deletedDropLink, 'Drop link deleted successfully', true));
+      res.status(STATUS_CODES.OK).json(new apiResponse(STATUS_CODES.OK, deletedDropLink, 'Drop link deleted successfully', true));
     } catch (error) {
-      next(new apiError(500, 'Failed to delete drop link', error));
+      next(new apiError(STATUS_CODES.BAD_REQUEST, 'Failed to delete drop link', error));
     }
   })
 );

@@ -17,5 +17,6 @@
         "oidc",
         "resave"
     ],
-    "javascript.preferences.importModuleSpecifierEnding": "js"
+    "javascript.preferences.importModuleSpecifierEnding": "js",
+    "javascript.preferences.importModuleSpecifier": "relative",
 }

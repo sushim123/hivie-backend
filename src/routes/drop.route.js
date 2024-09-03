@@ -4,6 +4,7 @@ import {Drop} from '../models/drop.model.js';
 import {apiError} from '../utils/apiError.util.js';
 import {apiResponse} from '../utils/apiResponse.util.js';
 import {asyncHandler} from '../utils/asyncHandler.util.js';
+import { DUPLICATE_ERROR_CODE, STATUS_CODES } from '../constants.js';
 
 const route = Router();
 
@@ -25,9 +26,9 @@ route.post(
         deliverables
       });
       await newDrop.save();
-      res.json(new apiResponse(201, newDrop, 'Drop created successfully', true));
+      res.json(new apiResponse(STATUS_CODES.CREATED, newDrop, 'Drop created successfully', true));
     } catch (error) {
-      next(new apiError(500, 'Failed to create drop', error));
+      next(new apiError(STATUS_CODES.BAD_REQUEST, 'Failed to create drop', error));
     }
   })
 );
@@ -42,11 +43,17 @@ route.put(
         new: true
       });
       if (!updatedDrop) {
-        return next(new apiError(404, 'Drop not found'));
+        return next(new apiError(STATUS_CODES.NOT_FOUND, 'Drop not found'));
       }
-      res.json(new apiResponse(200, updatedDrop, 'Drop updated successfully', true));
+      res.json(new apiResponse(STATUS_CODES.OK, updatedDrop, 'Drop updated successfully', true));
     } catch (error) {
-      next(new apiError(500, 'Failed to update drop', error));
+      if (error.code === 11000) {
+        // Handle duplicate key error
+        next(new apiError(STATUS_CODES.CONFLICT, 'Duplicate entry: This drop already exists', error));
+      } else {
+        // Handle other errors
+        next(new apiError(STATUS_CODES.BAD_REQUEST, 'Failed to create drop', error));
+      }
     }
   })
 );
@@ -58,14 +65,12 @@ route.delete(
     try {
       const {id} = req.params;
       const drop = await Drop.findOneAndDelete({$or: [{drop_id: id}, {_id: id}]});
-
       if (!drop) {
-        return next(new apiError(404, 'Drop not found'));
+        return next(new apiError(STATUS_CODES.NOT_FOUND, 'Drop not found'));
       }
-
-      res.status(200).json(new apiResponse(200, null, 'Drop deleted successfully', true));
+      res.status(STATUS_CODES.OK).json(new apiResponse(STATUS_CODES.OK, null, 'Drop deleted successfully', true));
     } catch (error) {
-      next(new apiError(500, 'Failed to delete drop', error));
+      next(new apiError(STATUS_CODES.BAD_REQUEST, 'Failed to delete drop', error));
     }
   })
 );
@@ -81,14 +86,12 @@ route.get(
         start_date: {$lte: currentDate},
         end_date: {$gte: currentDate}
       });
-
       if (!activeDrops.length) {
-        return next(new apiError(404, 'No active drops found'));
+        return next(new apiError(STATUS_CODES.NOT_FOUND, 'No active drops found'));
       }
-
-      res.json(new apiResponse(200, activeDrops, 'Active drops fetched successfully', true));
+      res.json(new apiResponse(STATUS_CODES.OK, activeDrops, 'Active drops fetched successfully', true));
     } catch (error) {
-      next(new apiError(500, 'Failed to fetch active drops', error));
+      next(new apiError(STATUS_CODES.BAD_REQUEST, 'Failed to fetch active drops', error));
     }
   })
 );
@@ -101,11 +104,11 @@ route.get(
       const currentDate = new Date();
       const activeDrops = await Drop.find({});
       if (!activeDrops.length) {
-        return next(new apiError(404, 'No active drops found'));
+        return next(new apiError(STATUS_CODES.NOT_FOUND, 'No active drops found'));
       }
-      res.json(new apiResponse(200, activeDrops, 'Active drops fetched successfully', true));
+      res.json(new apiResponse(STATUS_CODES.OK, activeDrops, 'Active drops fetched successfully', true));
     } catch (error) {
-      next(new apiError(500, 'Failed to fetch active drops', error));
+      next(new apiError(STATUS_CODES.BAD_REQUEST, 'Failed to fetch active drops', error));
     }
   })
 );
@@ -126,9 +129,9 @@ route.get(
         activeDrops,
         totalPayout: totalPayout[0]?.total || 0
       };
-      res.status(200).json(new apiResponse(200, stats, 'Drop stats fetched successfully', true));
+      res.status(STATUS_CODES.OK).json(new apiResponse(STATUS_CODES.OK, stats, 'Drop stats fetched successfully', true));
     } catch (error) {
-      next(new apiError(500, 'Failed to fetch drop stats', error));
+      next(new apiError(STATUS_CODES.BAD_REQUEST, 'Failed to fetch drop stats', error));
     }
   })
 );
@@ -142,11 +145,7 @@ route.get(
 
       // Convert start_date to start of the day (00:00:00.000Z) in ISO format
       const startDate = start_date ? new Date(`${start_date}T00:00:00.000Z`) : undefined;
-
-      // Convert end_date to end of the day (23:59:59.999Z) in ISO format
       const endDate = end_date ? new Date(`${end_date}T23:59:59.999Z`) : undefined;
-
-      // Build the search query
       const searchQuery = {
         $and: [
           {
@@ -161,11 +160,10 @@ route.get(
           endDate ? {end_date: {$lte: endDate}} : {}
         ].filter(Boolean) // Remove empty conditions
       };
-
       const drops = await Drop.find(searchQuery);
-      res.status(200).json(new apiResponse(200, drops, 'Search results fetched successfully', true));
+      res.status(STATUS_CODES.OK).json(new apiResponse(STATUS_CODES.OK, drops, 'Search results fetched successfully', true));
     } catch (error) {
-      next(new apiError(500, 'Failed to search drops', error));
+      next(new apiError(STATUS_CODES.BAD_REQUEST, 'Failed to search drops', error));
     }
   })
 );

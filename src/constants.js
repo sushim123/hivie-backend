@@ -1,6 +1,6 @@
 export const API_INSTA_GRAPH = 'https://graph.facebook.com/v20.0/17841468546353221';
 export const OPTIONS_INSTA = "{id,username,name,profile_picture_url,followers_count,follows_count,media_count,media{id,caption,media_type,media_url,thumbnail_url,permalink,timestamp,like_count,comments_count}"
-export const REDIRECT_URL = `${process.env.BASE_URL}/api/v1/insta/auth/callback`;
+export const INSTA_REDIRECT_URL = `${process.env.BASE_URL}/api/v1/insta/auth/callback`;
 export const INSTA_URL=`https://api.instagram.com/oauth`;
 export const INSTA_GRAPH_URL='https://graph.instagram.com/me';
 export const STATUS_CODES = {
@@ -55,3 +55,4 @@ export const STATUS_CODES = {
     NETWORK_AUTHENTICATION_REQUIRED: 511 // The client needs to authenticate to gain network access.
   };
 
+export const DUPLICATE_ERROR_CODE = 11000;

@@ -21,7 +21,7 @@ const userSchema = new mongoose.Schema(
       type: String,
       enum: ['admin', 'influencer', 'brand'],
       required: true,
-      default: 'influencer',
+      default: 'influencer'
     },
     picture: {type: String, default: ''},
     sid: {type: String, default: ''},
