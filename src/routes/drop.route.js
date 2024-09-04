@@ -1,10 +1,9 @@
-import {Router} from 'express';
-import {isAuthenticated} from '../middlewares/auth.middleware.js';
-import {Drop} from '../models/drop.model.js';
-import {apiError} from '../utils/apiError.util.js';
-import {apiResponse} from '../utils/apiResponse.util.js';
-import {asyncHandler} from '../utils/asyncHandler.util.js';
-import { DUPLICATE_ERROR_CODE, STATUS_CODES } from '../constants.js';
+import { Router } from 'express';
+import { STATUS_CODES } from '../constants.js';
+import { Drop } from '../models/drop.model.js';
+import { apiError } from '../utils/apiError.util.js';
+import { apiResponse } from '../utils/apiResponse.util.js';
+import { asyncHandler } from '../utils/asyncHandler.util.js';
 
 const route = Router();
 
@@ -13,7 +12,21 @@ route.post(
   '/',
   asyncHandler(async (req, res, next) => {
     try {
-      const {brand_id, title, description, cover_image, payout, start_date, end_date, deliverables} = req.body;
+      const { brand_id, title, description, cover_image, payout, start_date, end_date, deliverables } = req.body;
+
+      // Validate deliverables according to their type
+      const validatedDeliverables = deliverables.map((deliverable) => {
+        if (deliverable.deliverable_type === 'reel') {
+          if (!deliverable.details.title || typeof deliverable.details.time_duration !== 'number') {
+            throw new apiError(STATUS_CODES.BAD_REQUEST, 'Invalid reel details');
+          }
+        } else if (deliverable.deliverable_type === 'post') {
+          if (!deliverable.details.title || !deliverable.details.description) {
+            throw new apiError(STATUS_CODES.BAD_REQUEST, 'Invalid post details');
+          }
+        }
+        return deliverable;
+      });
 
       const newDrop = new Drop({
         brand_id,
@@ -23,8 +36,9 @@ route.post(
         payout,
         start_date,
         end_date,
-        deliverables
+        deliverables: validatedDeliverables
       });
+
       await newDrop.save();
       res.json(new apiResponse(STATUS_CODES.CREATED, newDrop, 'Drop created successfully', true));
     } catch (error) {
@@ -32,39 +46,58 @@ route.post(
     }
   })
 );
-// Route to update the drop.
+
+// Route to update the drop
 route.put(
   '/:id',
   asyncHandler(async (req, res, next) => {
     try {
-      const {id} = req.params;
+      const { id } = req.params;
       const updates = req.body;
-      const updatedDrop = await Drop.findOneAndUpdate({$or: [{drop_id: id}, {_id: id}]}, updates, {
-        new: true
+
+      // Validate deliverables in updates
+      if (updates.deliverables) {
+        const validatedDeliverables = updates.deliverables.map((deliverable) => {
+          if (deliverable.deliverable_type === 'reel') {
+            if (!deliverable.details.title || typeof deliverable.details.time_duration !== 'number') {
+              throw new apiError(STATUS_CODES.BAD_REQUEST, 'Invalid reel details');
+            }
+          } else if (deliverable.deliverable_type === 'post') {
+            if (!deliverable.details.title || !deliverable.details.description) {
+              throw new apiError(STATUS_CODES.BAD_REQUEST, 'Invalid post details');
+            }
+          }
+          return deliverable;
+        });
+        updates.deliverables = validatedDeliverables;
+      }
+
+      const updatedDrop = await Drop.findOneAndUpdate({ _id: id }, updates, {
+        new: true,
+        runValidators: true
       });
+
       if (!updatedDrop) {
         return next(new apiError(STATUS_CODES.NOT_FOUND, 'Drop not found'));
       }
       res.json(new apiResponse(STATUS_CODES.OK, updatedDrop, 'Drop updated successfully', true));
     } catch (error) {
       if (error.code === 11000) {
-        // Handle duplicate key error
         next(new apiError(STATUS_CODES.CONFLICT, 'Duplicate entry: This drop already exists', error));
       } else {
-        // Handle other errors
-        next(new apiError(STATUS_CODES.BAD_REQUEST, 'Failed to create drop', error));
+        next(new apiError(STATUS_CODES.BAD_REQUEST, 'Failed to update drop', error));
       }
     }
   })
 );
-//route to delete the drop
+
+// Route to delete the drop
 route.delete(
   '/:id',
-  // isAuthenticated,
   asyncHandler(async (req, res, next) => {
     try {
-      const {id} = req.params;
-      const drop = await Drop.findOneAndDelete({$or: [{drop_id: id}, {_id: id}]});
+      const { id } = req.params;
+      const drop = await Drop.findOneAndDelete({ _id: id });
       if (!drop) {
         return next(new apiError(STATUS_CODES.NOT_FOUND, 'Drop not found'));
       }
@@ -83,8 +116,8 @@ route.get(
       const currentDate = new Date();
 
       const activeDrops = await Drop.find({
-        start_date: {$lte: currentDate},
-        end_date: {$gte: currentDate}
+        start_date: { $lte: currentDate },
+        end_date: { $gte: currentDate }
       });
       if (!activeDrops.length) {
         return next(new apiError(STATUS_CODES.NOT_FOUND, 'No active drops found'));
@@ -96,34 +129,17 @@ route.get(
   })
 );
 
-//get all drops in db
-route.get(
-  '/',
-  asyncHandler(async (req, res, next) => {
-    try {
-      const currentDate = new Date();
-      const activeDrops = await Drop.find({});
-      if (!activeDrops.length) {
-        return next(new apiError(STATUS_CODES.NOT_FOUND, 'No active drops found'));
-      }
-      res.json(new apiResponse(STATUS_CODES.OK, activeDrops, 'Active drops fetched successfully', true));
-    } catch (error) {
-      next(new apiError(STATUS_CODES.BAD_REQUEST, 'Failed to fetch active drops', error));
-    }
-  })
-);
-
-// GET /api/v1/drops/stats
+// Route to get stats
 route.get(
   '/stats',
   asyncHandler(async (req, res, next) => {
     try {
       const totalDrops = await Drop.countDocuments();
       const activeDrops = await Drop.countDocuments({
-        start_date: {$lte: new Date()},
-        end_date: {$gte: new Date()}
+        start_date: { $lte: new Date() },
+        end_date: { $gte: new Date() }
       });
-      const totalPayout = await Drop.aggregate([{$group: {_id: null, total: {$sum: '$payout'}}}]);
+      const totalPayout = await Drop.aggregate([{ $group: { _id: null, total: { $sum: '$payout' } } }]);
       const stats = {
         totalDrops,
         activeDrops,
@@ -136,34 +152,67 @@ route.get(
   })
 );
 
-// GET /api/v1/drops/search
+// Route to get all drops in DB
+route.get(
+  '/',
+  asyncHandler(async (req, res, next) => {
+    try {
+      const fetchedDrops = await Drop.find({});
+      if (!fetchedDrops.length) {
+        return next(new apiError(STATUS_CODES.NOT_FOUND, 'No drops found'));
+      }
+      res.json(new apiResponse(STATUS_CODES.OK, fetchedDrops, 'Drops fetched successfully', true));
+    } catch (error) {
+      next(new apiError(STATUS_CODES.BAD_REQUEST, 'Failed to fetch drops', error));
+    }
+  })
+);
+
+// Route to search drops
 route.get(
   '/search',
   asyncHandler(async (req, res, next) => {
     try {
-      const {query, start_date, end_date} = req.query;
+      const { query, start_date, end_date } = req.query;
 
-      // Convert start_date to start of the day (00:00:00.000Z) in ISO format
+      // Convert start_date and end_date to ISO format
       const startDate = start_date ? new Date(`${start_date}T00:00:00.000Z`) : undefined;
       const endDate = end_date ? new Date(`${end_date}T23:59:59.999Z`) : undefined;
       const searchQuery = {
         $and: [
           {
             $or: [
-              {title: {$regex: query, $options: 'i'}},
-              {description: {$regex: query, $options: 'i'}},
-              {'deliverables.deliverable_type': {$regex: query, $options: 'i'}},
-              {'deliverables.details.title': {$regex: query, $options: 'i'}}
+              { title: { $regex: query, $options: 'i' } },
+              { description: { $regex: query, $options: 'i' } },
+              { 'deliverables.deliverable_type': { $regex: query, $options: 'i' } },
+              { 'deliverables.details.title': { $regex: query, $options: 'i' } }
             ]
           },
-          startDate ? {start_date: {$gte: startDate}} : {},
-          endDate ? {end_date: {$lte: endDate}} : {}
+          startDate ? { start_date: { $gte: startDate } } : {},
+          endDate ? { end_date: { $lte: endDate } } : {}
         ].filter(Boolean) // Remove empty conditions
       };
       const drops = await Drop.find(searchQuery);
       res.status(STATUS_CODES.OK).json(new apiResponse(STATUS_CODES.OK, drops, 'Search results fetched successfully', true));
     } catch (error) {
       next(new apiError(STATUS_CODES.BAD_REQUEST, 'Failed to search drops', error));
+    }
+  })
+);
+
+// Route to get a drop by ID
+route.get(
+  '/:id',
+  asyncHandler(async (req, res, next) => {
+    try {
+      const id = req.params.id;
+      const fetchedDrop = await Drop.findById(id);
+      if (!fetchedDrop) {
+        return next(new apiError(STATUS_CODES.NOT_FOUND, `No drop with ID ${id} found`));
+      }
+      res.json(new apiResponse(STATUS_CODES.OK, fetchedDrop, 'Drop fetched successfully', true));
+    } catch (error) {
+      next(new apiError(STATUS_CODES.BAD_REQUEST, `Failed to fetch drop with ID ${id}`, error));
     }
   })
 );
