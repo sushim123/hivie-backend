@@ -1,8 +1,7 @@
 import axios from 'axios';
 import dotenv from 'dotenv'; // Loads environment variables from a .env file
-import {STATUS_CODES} from '../constants.js';
 import {INSTA_CODE_PARAMS, INSTA_TOKEN_PARAMS} from '../configs/global.config.js';
-import {INSTA_URL} from '../constants.js';
+import {INSTA_URL, STATUS_CODES} from '../constants.js';
 import {calculateMetrics, getBusinessDiscovery, getUserInfo} from '../helpers/instagram.helper.js';
 import {apiError} from '../utils/apiError.util.js';
 import {apiResponse} from '../utils/apiResponse.util.js';
@@ -13,7 +12,10 @@ export const fetchDataByInstaAuth = async (req, res) => {
   const authCode = req.query.code;
   if (authCode) {
     try {
-      const tokenResponse = await axios.post(`${INSTA_URL}/access_token`, new URLSearchParams({...INSTA_TOKEN_PARAMS,code:authCode}));
+      const tokenResponse = await axios.post(
+        `${INSTA_URL}/access_token`,
+        new URLSearchParams({...INSTA_TOKEN_PARAMS, code: authCode})
+      );
       const userInfo = await getUserInfo(tokenResponse.data.access_token);
       const businessInfo = await getBusinessDiscovery(userInfo.username);
 

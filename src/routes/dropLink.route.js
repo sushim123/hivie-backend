@@ -1,6 +1,6 @@
 import {Router} from 'express';
-import {STATUS_CODES} from '../constants.js';
-import dropLink from '../models/dropLink.model.js';
+import {DUPLICATE_ERROR_CODE, STATUS_CODES} from '../constants.js';
+import DropLink from '../models/dropLink.model.js';
 import {apiError} from '../utils/apiError.util.js';
 import {apiResponse} from '../utils/apiResponse.util.js';
 import {asyncHandler} from '../utils/asyncHandler.util.js';
@@ -11,8 +11,9 @@ route.post(
   '/',
   asyncHandler(async (req, res, next) => {
     try {
-      const {brand_id, deliverables, user_id} = req.body;
-      const newDropLink = new dropLink({
+      const {drop_id, brand_id, deliverables, user_id} = req.body;
+      const newDropLink = new DropLink({
+        drop_id,
         brand_id,
         deliverables,
         user_id
@@ -36,7 +37,7 @@ route.get(
   '/',
   asyncHandler(async (req, res, next) => {
     try {
-      const newDropLink = await dropLink.find();
+      const newDropLink = await DropLink.find();
       if (!newDropLink) {
         return next(new apiError(STATUS_CODES.NOT_FOUND, 'Drop link not found'));
       }
@@ -51,7 +52,7 @@ route.get(
   '/:id',
   asyncHandler(async (req, res, next) => {
     try {
-      const newDropLink = await dropLink.findById(req.params.id);
+      const newDropLink = await DropLink.findById(req.params.id);
       if (!newDropLink) {
         return next(new apiError(STATUS_CODES.NOT_FOUND, 'Drop link not found'));
       }
@@ -72,7 +73,7 @@ route.put(
       const {id} = req.params;
 
       // Search for the drop link by _id
-      const updatedDropLink = await dropLink.findOneAndUpdate({_id: id}, req.body, {
+      const updatedDropLink = await DropLink.findOneAndUpdate({_id: id}, req.body, {
         new: true,
         runValidators: true
       });
@@ -93,7 +94,7 @@ route.delete(
   '/:id',
   asyncHandler(async (req, res, next) => {
     try {
-      const deletedDropLink = await dropLink.findByIdAndDelete(req.params.id);
+      const deletedDropLink = await DropLink.findByIdAndDelete(req.params.id);
       if (!deletedDropLink) {
         return next(new apiError(STATUS_CODES.NOT_FOUND, 'Drop link not found'));
       }

@@ -1,4 +1,5 @@
 import bcrypt from 'bcrypt';
+import { STATUS_CODES } from '../constants.js';
 
 export async function hashString(plainText) {
   try {
@@ -8,6 +9,6 @@ export async function hashString(plainText) {
     const hashedKey = await bcrypt.hash(plainText, salt);
     return hashedKey;
   } catch (error) {
-    throw new apiError(500, 'Failed to hash string', [error.message]);
+    throw new apiError(STATUS_CODES.INTERNAL_SERVER_ERROR, 'Failed to hash string', [error.message]);
   }
 }

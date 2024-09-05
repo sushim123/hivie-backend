@@ -1,7 +1,6 @@
 import mongoose from 'mongoose';
-import mongooseAggregatePaginate from 'mongoose-aggregate-paginate-v2';
 
-const { Schema } = mongoose;
+const { Schema, model } = mongoose;
 
 // Schema for Reels
 const ReelSchema = new Schema({
@@ -16,9 +15,8 @@ const PostSchema = new Schema({
   description: { type: String, required: true }
 });
 
-// Embedded Deliverable Schema
+// Schema for Deliverables
 const DeliverableSchema = new Schema({
-  deliverable_id: { type: String, required: true, unique: true },
   deliverable_type: {
     type: String,
     enum: ['reel', 'post'],
@@ -32,34 +30,31 @@ const DeliverableSchema = new Schema({
         if (this.deliverable_type === 'reel') {
           // Validate against Reel schema
           const reelKeys = Object.keys(ReelSchema.obj);
-          return reelKeys.every(key => value[key] != null);
+          return reelKeys.every((key) => value[key] != null);
         } else if (this.deliverable_type === 'post') {
           // Validate against Post schema
           const postKeys = Object.keys(PostSchema.obj);
-          return postKeys.every(key => value[key] != null);
+          return postKeys.every((key) => value[key] != null);
         }
         return false;
       },
       message: (props) => `Details do not match the schema for the selected deliverable type: ${props.value}`
     }
   }
-});
+}, { _id: false });
 
 // Drop Schema with embedded Deliverables
-const dropSchema = new Schema(
-  {
-    brand_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Brand', required: true },
-    title: { type: String, required: [true, 'Title is required'] },
-    description: { type: String, required: [true, 'Description is required'] },
-    cover_image: { type: String, default: '' },
-    payout: { type: Number, required: [true, 'Payout is required'] },
-    start_date: { type: Date, required: [true, 'Start date is required'] },
-    end_date: { type: Date, required: [true, 'End date is required'] },
-    deliverables: [DeliverableSchema] // Array of embedded deliverables
-  },
-  { timestamps: true }
-);
+const DropSchema = new Schema({
+  brand_id: { type: Schema.Types.ObjectId, ref: 'Brand', required: true },
+  title: { type: String, required: [true, 'Title is required'] },
+  description: { type: String, required: [true, 'Description is required'] },
+  cover_image: { type: String, default: '' },
+  payout: { type: Number, required: [true, 'Payout is required'] },
+  start_date: { type: Date, required: [true, 'Start date is required'] },
+  end_date: { type: Date, required: [true, 'End date is required'] },
+  deliverables: [DeliverableSchema] // Array of embedded deliverables
+}, { timestamps: true });
 
-dropSchema.plugin(mongooseAggregatePaginate);
+const Drop = model('Drop', DropSchema);
 
-export const Drop = mongoose.model('Drop', dropSchema);
+export default Drop;

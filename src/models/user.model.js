@@ -7,14 +7,14 @@ const userSchema = new mongoose.Schema(
     name: String,
     email: {
       type: String,
-      required: [true, 'Email is required'], // Custom error message if email is missing
-      lowercase: true, // Convert the email to lowercase before storing
-      unique: true, // Ensure that the email is unique across all users
-      trim: true, // Remove whitespace from both ends of the email
-      index: true // Create an index on the email field for faster lookups
+      required: [true, 'Email is required'],
+      lowercase: true,
+      unique: true, 
+      trim: true,
+      index: true
     },
 
-    // password: {type: String, required: [true, 'Password is required']},
+
 
     refreshToken: {type: String, default: ''},
     role: {
@@ -33,20 +33,20 @@ const userSchema = new mongoose.Schema(
   {timestamps: true}
 );
 
-// Middleware to hash the user's password before saving the document (currently commented out)
 
-// userSchema.pre('save', async function (next) {
-//   try {// Check if the document is new; only hash the password if it's a new document
-//     if (this.isNew) {
-//       const salt = await bcrypt.genSalt(10); // Generate a salt for hashing
-//       const hashedPassword = await bcrypt.hash(this.password, salt); // Hash the password with the salt
-//       this.password = hashedPassword; // Replace the plain text password with the hashed password
-//     }
-//     next(); // Continue with the save operation
-//   } catch (error) {
-//     next(error); // Pass any errors to the next middleware
-//   }
-// });
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 userSchema.plugin(mongooseAggregatePaginate);
 export const User = mongoose.model('User', userSchema);
