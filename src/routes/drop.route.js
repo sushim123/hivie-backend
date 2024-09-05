@@ -13,11 +13,6 @@ route.post(
   asyncHandler(async (req, res, next) => {
     try {
       const {brand_id, title, description, cover_image, payout, start_date, end_date, deliverables} = req.body;
-      start_date = start_date ? new Date(`${start_date}${START_OF_DAY}`) : new Date();
-      end_date = end_date
-        ? new Date(`${end_date}${END_OF_DAY}`)
-        : new Date(new Date().setMonth(new Date().getMonth() + 1));
-
       // Validate deliverables according to their type
       const validatedDeliverables = deliverables.map((deliverable) => {
         if (deliverable.deliverable_type === 'reel') {
@@ -40,7 +35,7 @@ route.post(
         payout,
         start_date,
         end_date,
-        deliverables: validatedDeliverables  // Fixed variable name here
+        deliverables: validatedDeliverables // Fixed variable name here
       });
 
       await newDrop.save();
@@ -86,7 +81,8 @@ route.put(
       }
       res.json(new apiResponse(STATUS_CODES.OK, updatedDrop, 'Drop updated successfully', true));
     } catch (error) {
-      if (error.code === 11000) { // Duplicate key error code
+      if (error.code === 11000) {
+        // Duplicate key error code
         next(new apiError(STATUS_CODES.CONFLICT, 'Duplicate entry: This drop already exists', error));
       } else {
         next(new apiError(STATUS_CODES.BAD_REQUEST, 'Failed to update drop', error));
