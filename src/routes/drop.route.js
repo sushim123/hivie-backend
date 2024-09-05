@@ -221,4 +221,66 @@ route.get(
   })
 );
 
+
+
+route.get(
+  '/adv-search',
+  asyncHandler(async (req, res, next) => {
+    try {
+      const { type, dateField, sortOrder } = req.query;
+      const validDateFields = ['start_date', 'end_date'];
+      const validSortOrders = ['asc', 'desc'];
+      let drops = [];
+      if (type) {
+        drops = await Drop.find({});
+
+        if (!drops.length) {
+          return next(new apiError(STATUS_CODES.FORBIDDEN, 'No drops found'));
+        }
+
+        
+        const filteredDrops = drops
+          .map(drop => {
+            drop.deliverables = drop.deliverables.filter(d => d.deliverable_type === type);
+            return drop;
+          })
+          .filter(drop => drop.deliverables.length > 0); 
+
+        if (!filteredDrops.length) {
+          return next(new apiError(STATUS_CODES.NOT_FOUND, `No drops with "${type}" deliverables found`));
+        }
+
+        drops = filteredDrops;
+      }
+
+      if (dateField && sortOrder) {
+        if (!validDateFields.includes(dateField)) {
+          return next(new apiError(STATUS_CODES.BAD_REQUEST, 'Invalid date field for sorting'));
+        }
+
+        const sortOrderValue = sortOrder === 'desc' ? -1 : 1;
+        if (!validSortOrders.includes(sortOrder)) {
+          return next(new apiError(STATUS_CODES.BAD_REQUEST, 'Invalid sort order, must be either "asc" or "desc"'));
+        }
+        if (!drops.length) {
+          drops = await Drop.find({});
+        }
+        drops = drops.sort((a, b) => (a[dateField] > b[dateField] ? sortOrderValue : -sortOrderValue));
+        
+        if (!drops.length) {
+          return next(new apiError(STATUS_CODES.NOT_FOUND, 'No drops found for sorting'));
+        }
+      }
+
+      if (!drops.length) {
+        return next(new apiError(STATUS_CODES.BAD_REQUEST, 'Please provide valid query parameters for filtering or sorting.'));
+      }
+      res.status(STATUS_CODES.OK).json(new apiResponse(STATUS_CODES.OK, drops, 'Drops fetched successfully', true));
+    } catch (error) {
+      next(new apiError(STATUS_CODES.INTERNAL_SERVER_ERROR, 'Failed to fetch drops', error));
+    }
+  })
+);
+
+
 export default route;
