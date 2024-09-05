@@ -1,5 +1,6 @@
 import bcrypt from 'bcrypt';
 import {apiError} from './apiError.util';
+import { STATUS_CODES } from '../constants.js';
 
 export async function decryptHash(plainText, hashedKey) {
   try {
@@ -7,6 +8,6 @@ export async function decryptHash(plainText, hashedKey) {
     const match = await bcrypt.compare(plainText, hashedKey);
     return match ? plainText : ''; // Returns true if they match, false otherwise
   } catch (error) {
-    throw new apiError(500, 'Failed to decrypt string', [error.message]);
+    throw new apiError(STATUS_CODES.INTERNAL_SERVER_ERROR, 'Failed to decrypt string', [error.message]);
   }
 }
