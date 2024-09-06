@@ -53,12 +53,12 @@ export const fetchDataByUsername = async (req, res) => {
         businessInfo,
         metrics
       };
-      res.status(200).json(new apiResponse(200, responseData, `User's data fetched successfully.`, true));
+      res.status(STATUS_CODES.OK).json(new apiResponse(STATUS_CODES.OK, responseData, `User's data fetched successfully.`, true));
     } catch (error) {
       res
-      .status(400)
-      .json(new apiError(400, 'Error fetching data.', error.response ? error.response.data : error.message));    }
+      .status(STATUS_CODES.BAD_REQUEST)
+      .json(new apiError(STATUS_CODES.BAD_REQUEST, 'Error fetching data.', error.response ? error.response.data : error.message));    }
   } else {
-    res.status(502).json(new apiError(502, 'Please provide username ', 'username not found'));
+    res.status(STATUS_CODES.BAD_GATEWAY).json(new apiError(STATUS_CODES.BAD_GATEWAY, 'Please provide username ', 'username not found'));
   }
 };
