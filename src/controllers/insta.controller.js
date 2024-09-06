@@ -16,6 +16,7 @@ export const fetchDataByInstaAuth = async (req, res) => {
         `${INSTA_URL}/access_token`,
         new URLSearchParams({...INSTA_TOKEN_PARAMS, code: authCode})
       );
+      const accessToken = tokenResponse.data.access_token;
       const userInfo = await getUserInfo(tokenResponse.data.access_token);
       const businessInfo = await getBusinessDiscovery(userInfo.username);
 
