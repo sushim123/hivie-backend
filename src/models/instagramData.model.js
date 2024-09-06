@@ -14,6 +14,15 @@ const MediaSchema = new mongoose.Schema(
   {_id: false}
 );
 
+const MetricsSchema = new mongoose.Schema(
+  {
+    averageLikes : { type : Number, required: true},
+    averageComments: { type : Number, required: true},
+    engagementRate: { type : Number, required: true}
+
+  }
+
+)
 const BusinessInfoSchema = new mongoose.Schema(
   {
     id: {type: String, required: true},
@@ -23,7 +32,8 @@ const BusinessInfoSchema = new mongoose.Schema(
     followers_count: {type: Number, required: true},
     follows_count: {type: Number, required: true},
     media_count: {type: Number, required: true},
-    media: {type: [MediaSchema], required: true}
+    media: {type: [MediaSchema], required: true},
+    matrics : {type : [MetricsSchema], required : true}
   },
   {_id: false}
 );
