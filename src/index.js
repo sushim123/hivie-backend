@@ -37,11 +37,12 @@ import dropRoutes from './routes/drop.route.js';
 import dropLinkRoutes from './routes/dropLink.route.js';
 import indexRoutes from './routes/index.route.js';
 import instaRoutes from './routes/insta.routes.js';
-
+import ecommerceRoutes from './routes/e_commerce.route.js'
 app.use('/', indexRoutes);
 app.use('/api/v1/insta', instaRoutes);
 app.use('/api/v1/drops', dropRoutes);
 app.use('/api/v1/drop-link', dropLinkRoutes);
+app.use('/api/v1/e-commerce', ecommerceRoutes);
 
 // Error handling middleware
 app.use(notFoundError);
