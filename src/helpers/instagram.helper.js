@@ -32,7 +32,7 @@ export const getBusinessDiscovery = async (username) => {
     });
 
     // Corrected logging statement
-    console.log(response.data.business_discovery);
+    // console.log(response.data.business_discovery);
     return response.data.business_discovery;
   } catch (error) {
     throw new apiError(error.response?.status || STATUS_CODES.INTERNAL_SERVER_ERROR, 'Error fetching business discovery info', error.message, false);
