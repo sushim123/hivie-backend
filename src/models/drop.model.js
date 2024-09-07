@@ -41,7 +41,7 @@ const DeliverableSchema = new Schema({
       message: (props) => `Details do not match the schema for the selected deliverable type: ${props.value}`
     }
   }
-}, { _id: false });
+});//{ _id: false } removed to get _id in deliverables
 
 // Drop Schema with embedded Deliverables
 const DropSchema = new Schema({
@@ -52,7 +52,8 @@ const DropSchema = new Schema({
   payout: { type: Number, required: [true, 'Payout is required'] },
   start_date: { type: Date, required: [true, 'Start date is required'] },
   end_date: { type: Date, required: [true, 'End date is required'] },
-  deliverables: [DeliverableSchema] // Array of embedded deliverables
+  deliverables: [DeliverableSchema], // Array of embedded deliverables
+  interested_users: [{ type: Schema.Types.ObjectId, ref: 'User' }] // Array of user IDs who are interested in the drop
 }, { timestamps: true });
 
 const Drop = model('Drop', DropSchema);
