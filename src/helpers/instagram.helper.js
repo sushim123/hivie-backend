@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { STATUS_CODES } from '../constants.js';
 import { API_INSTA_GRAPH, INSTA_GRAPH_URL, OPTIONS_INSTA } from '../constants.js';
-import InstagramData from '../models/instagramData.model.js';
+// import InstagramData from '../models/instagramData.model.js';
 import { apiError } from '../utils/apiError.util.js';
 const accessToken = process.env.INSTA_ACCESS_TOKEN;
 

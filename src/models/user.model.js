@@ -32,20 +32,5 @@ const userSchema = new mongoose.Schema(
   {timestamps: true}
 );
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 userSchema.plugin(mongooseAggregatePaginate);
 export const User = mongoose.model('User', userSchema);

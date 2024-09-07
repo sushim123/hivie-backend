@@ -110,7 +110,7 @@ router.delete('/address/:addressId', async (req, res) => {
 });
 
 // Order Routes
-router.post('/create', async (req, res) => {
+router.post('/create-order', async (req, res) => {
   try {
     const { user_id, total_amount, payment_method, items } = req.body;
     if (!user_id || !total_amount || !payment_method) {
@@ -131,7 +131,7 @@ router.post('/create', async (req, res) => {
   }
 });
 
-router.get('/user/:userId', async (req, res) => {
+router.get('/order/:userId', async (req, res) => {
   try {
     const orders = await Order.find({ user_id: req.params.userId }).populate('user_id');
     res.json(orders);
@@ -163,7 +163,7 @@ router.patch('/order/:id/status', async (req, res) => {
 });
 
 // Cart Routes
-router.post('/create', async (req, res) => {
+router.post('/create-cart', async (req, res) => {
   try {
     const cart = new Cart({ user_id: req.body.user_id });
     await cart.save();

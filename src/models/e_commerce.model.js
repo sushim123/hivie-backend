@@ -58,7 +58,7 @@ const FlashSale = mongoose.model('FlashSale', flashSaleSchema);
 
 // Order Schema
 const orderSchema = new Schema({
-  user_id: { type: Schema.Types.ObjectId, ref: 'User', required: true },
+  user_id: { type: Schema.Types.ObjectId, ref: 'EUser', required: true },
   total_amount: { type: Number, required: true },
   payment_method: { type: String, required: true },
   order_status: { 
@@ -84,7 +84,7 @@ const OrderItem = mongoose.model('OrderItem', orderItemSchema);
 
 // Cart Schema
 const cartSchema = new Schema({
-  user_id: { type: Schema.Types.ObjectId, ref: 'User', required: true },
+  user_id: { type: Schema.Types.ObjectId, ref: 'EUser', required: true },
   created_at: { type: Date, default: Date.now },
   updated_at: { type: Date, default: Date.now }
 });

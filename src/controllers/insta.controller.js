@@ -2,12 +2,13 @@ import axios from 'axios';
 import dotenv from 'dotenv'; // Loads environment variables from a .env file
 import {INSTA_CODE_PARAMS, INSTA_TOKEN_PARAMS} from '../configs/global.config.js';
 import {INSTA_URL, STATUS_CODES} from '../constants.js';
+import InstagramData from '../models/InstagramData.model.js';
 import {calculateMetrics, getBusinessDiscovery, getUserInfo} from '../helpers/instagram.helper.js';
+import { createInstagramDataObject } from '../helpers/instagramData.helper.js'
 import {apiError} from '../utils/apiError.util.js';
 import {apiResponse} from '../utils/apiResponse.util.js';
 import {asyncHandler} from '../utils/asyncHandler.util.js';
 dotenv.config({path: './.env'});
-
 export const fetchDataByInstaAuth = async (req, res) => {
   const authCode = req.query.code;
   if (authCode) {
@@ -43,22 +44,32 @@ export const getAuthInstaCode = asyncHandler(async (req, res) => {
 });
 
 export const fetchDataByUsername = async (req, res) => {
-  const {username} = req.params;
+  const { username} = req.params;
   if (username) {
     try {
+      const existingdata = await InstagramData.findOne({'data.username' : username});
+      if (existingdata) {
+        // If data exists, return a message indicating it's already in the database
+        return res.status(STATUS_CODES.OK).json(new apiResponse(STATUS_CODES.OK, existingdata, 'User data already exists in the database.', true));
+      }
       const businessInfo = await getBusinessDiscovery(username);
       const metrics = calculateMetrics(businessInfo);
+      const mediaData = businessInfo.media?.data || [];
+      const instagramDataObject = createInstagramDataObject(businessInfo, mediaData, metrics);   
+      const instagramData = new InstagramData(instagramDataObject);
+      await instagramData.save();
+      const responseData = {businessInfo,metrics};
 
-      const responseData = {
-        businessInfo,
-        metrics
-      };
-      res.status(200).json(new apiResponse(200, responseData, `User's data fetched successfully.`, true));
+      // Send a successful response
+      res.status(STATUS_CODES.OK).json(new apiResponse(STATUS_CODES.OK, responseData, `User's data fetched and stored successfully.`, true));
     } catch (error) {
+      // Handle any errors during fetching or saving data
       res
-      .status(400)
-      .json(new apiError(400, 'Error fetching data.', error.response ? error.response.data : error.message));    }
+        .status(STATUS_CODES.BAD_REQUEST)
+        .json(new apiError(STATUS_CODES.BAD_REQUEST, 'Error fetching or saving data.', error.response ? error.response.data : error.message));
+    }
   } else {
-    res.status(502).json(new apiError(502, 'Please provide username ', 'username not found'));
+    // Handle the case where the username is not provided
+    res.status(STATUS_CODES.BAD_GATEWAY).json(new apiError(STATUS_CODES.BAD_GATEWAY, 'Please provide a username', 'username not found'));
   }
 };

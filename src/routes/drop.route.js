@@ -204,24 +204,6 @@ route.get(
   })
 );
 
-// Route to get a drop by ID
-route.get(
-  '/:id',
-  asyncHandler(async (req, res, next) => {
-    try {
-      const id = req.params.id;
-      const fetchedDrop = await Drop.findById(id);
-      if (!fetchedDrop) {
-        return next(new apiError(STATUS_CODES.NOT_FOUND, `No drop with ID ${id} found`));
-      }
-      res.json(new apiResponse(STATUS_CODES.OK, fetchedDrop, 'Drop fetched successfully', true));
-    } catch (error) {
-      next(new apiError(STATUS_CODES.BAD_REQUEST, `Failed to fetch drop with ID ${id}`, error));
-    }
-  })
-);
-
-
 
 route.get(
   '/adv-search',
@@ -278,6 +260,22 @@ route.get(
       res.status(STATUS_CODES.OK).json(new apiResponse(STATUS_CODES.OK, drops, 'Drops fetched successfully', true));
     } catch (error) {
       next(new apiError(STATUS_CODES.INTERNAL_SERVER_ERROR, 'Failed to fetch drops', error));
+    }
+  })
+);
+// Route to get a drop by ID
+route.get(
+  '/:id',
+  asyncHandler(async (req, res, next) => {
+    try {
+      const id = req.params.id;
+      const fetchedDrop = await Drop.findById(id);
+      if (!fetchedDrop) {
+        return next(new apiError(STATUS_CODES.NOT_FOUND, `No drop with ID ${id} found`));
+      }
+      res.json(new apiResponse(STATUS_CODES.OK, fetchedDrop, 'Drop fetched successfully', true));
+    } catch (error) {
+      next(new apiError(STATUS_CODES.BAD_REQUEST, `Failed to fetch drop with ID ${id}`, error));
     }
   })
 );
