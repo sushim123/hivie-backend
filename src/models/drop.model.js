@@ -53,7 +53,8 @@ const DropSchema = new Schema({
   start_date: { type: Date, required: [true, 'Start date is required'] },
   end_date: { type: Date, required: [true, 'End date is required'] },
   deliverables: [DeliverableSchema], // Array of embedded deliverables
-  interested_users: [{ type: Schema.Types.ObjectId, ref: 'User' }] // Array of user IDs who are interested in the drop
+  interested_users: [{ type: Schema.Types.ObjectId, ref: 'User' }], // Array of user IDs who are interested in the drop
+  assets: [{ type: String, default: '' }]
 }, { timestamps: true });
 
 const Drop = model('Drop', DropSchema);

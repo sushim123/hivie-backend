@@ -7,7 +7,7 @@ import {validateUserIds} from '../utils/validateSchema.util.js';
 // Create a new drop
 export const createDrop = async (req, res, next) => {
   try {
-    const {brand_id, title, description, cover_image, payout, start_date, end_date, deliverables} = req.body;
+    const {brand_id, title, description, cover_image, payout, start_date, end_date, deliverables,interested_users,assets} = req.body;
     // Validate deliverables according to their type
     const validatedDeliverables = deliverables.map((deliverable) => {
       if (deliverable.deliverable_type === 'reel') {
@@ -30,6 +30,8 @@ export const createDrop = async (req, res, next) => {
       payout,
       start_date,
       end_date,
+      assets,
+      interested_users,
       deliverables: validatedDeliverables // Fixed variable name here
     });
 
