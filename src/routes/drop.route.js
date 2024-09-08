@@ -16,24 +16,15 @@ import {asyncHandler} from '../utils/asyncHandler.util.js';
 
 const route = Router();
 
-route.post('/', asyncHandler(createDrop));
-
-route.put('/:id', asyncHandler(updateDrop));
-
-route.delete('/:id', asyncHandler(deleteDrop));
-
-route.get('/active-drops', asyncHandler(getActiveDrops));
-
-route.get('/stats', asyncHandler(getDropStats));
-
-route.get('/:id', asyncHandler(getDropsById));
-
-route.get('/', asyncHandler(getAllDrops));
-
 route.get('/search', asyncHandler(searchDrops));
-
+route.get('/active-drops', asyncHandler(getActiveDrops));
+route.get('/stats', asyncHandler(getDropStats));
 route.get('/adv-search', asyncHandler(advancedSearchDrops));
-
 route.patch('/toggle-interested/:id', asyncHandler(toggleInterested));
+route.get('/:id', asyncHandler(getDropsById));
+route.put('/:id', asyncHandler(updateDrop));
+route.delete('/:id', asyncHandler(deleteDrop));
+route.post('/', asyncHandler(createDrop));
+route.get('/', asyncHandler(getAllDrops));
 
 export default route;

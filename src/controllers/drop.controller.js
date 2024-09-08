@@ -159,6 +159,7 @@ export const getDropStats = async (req, res, next) => {
 export const searchDrops = async (req, res, next) => {
   try {
     const {query, start_date, end_date} = req.query;
+
     // Convert start_date and end_date to ISO format
     const startDate = start_date ? new Date(`${start_date}${START_OF_DAY}`) : undefined;
     const endDate = end_date ? new Date(`${end_date}${END_OF_DAY}`) : undefined;
