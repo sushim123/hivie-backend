@@ -170,17 +170,17 @@ export const deleteUser = async (req, res) => {
       res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({message: err.message});
     }
   }
-  export const addFlashsaleProduct =async (req, res) => {
+  export const addFlashSaleProduct =async (req, res) => {
     try {
       const {product_id, discount_percentage, start_time, end_time} = req.body;
-  
+
       // Validate required fields
       if (!product_id || !discount_percentage || !start_time || !end_time) {
         return res
           .status(STATUS_CODES.BAD_REQUEST)
           .json({message: 'Missing required fields: product_id, discount_percentage, start_time, and end_time'});
       }
-  
+
       // Create a new flash sale instance
       const flashSale = new FlashSale({
         product_id,
@@ -188,16 +188,16 @@ export const deleteUser = async (req, res) => {
         start_time,
         end_time
       });
-  
+
       // Save the flash sale to the database
       await flashSale.save();
-  
+
       res.status(STATUS_CODES.CREATED).json(flashSale);
     } catch (err) {
       res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({message: err.message});
     }
   }
-  export const getAllFlashsaleProduct = async (req, res) => {
+  export const getAllFlashSaleProduct = async (req, res) => {
     try {
       const flashSales = await FlashSale.find().populate('product_id');
       res.json(flashSales);
@@ -207,7 +207,7 @@ export const deleteUser = async (req, res) => {
         .json((STATUS_CODES.INTERNAL_SERVER_ERROR, 'flashsale not found ', err.message, false));
     }
   }
-  export const fetchFlashsaleProductById = async (req, res) => {
+  export const fetchFlashSaleProductById = async (req, res) => {
     try {
       if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
         res
@@ -239,16 +239,16 @@ export const deleteUser = async (req, res) => {
       res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({message: err.message});
     }
   }
-  export const updateProduct= async (req, res) => {
+  export const addProduct= async (req, res) => {
     try {
       const {category_id, name, description, price, stock_quantity, image_url, is_flash_sale} = req.body;
-  
+
       if (!category_id || !name || !price) {
         return res
           .status(STATUS_CODES.BAD_REQUEST)
           .json({message: 'Missing required fields: category_id, name, and price'});
       }
-  
+
       const product = new Product({
         category_id,
         name,
@@ -258,9 +258,9 @@ export const deleteUser = async (req, res) => {
         image_url,
         is_flash_sale
       });
-  
+
       await product.save();
-  
+
       res.status(STATUS_CODES.CREATED).json(product);
     } catch (err) {
       res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({message: err.message});
