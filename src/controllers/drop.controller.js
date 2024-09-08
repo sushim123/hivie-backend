@@ -83,7 +83,7 @@ export const deleteDrop = async (req, res, next) => {
     if (!drop) {
       return next(new apiError(STATUS_CODES.NOT_FOUND, 'Drop not found'));
     }
-    res.status(STATUS_CODES.OK).json(new apiResponse(STATUS_CODES.OK, null, 'Drop deleted successfully', true));
+    res.status(STATUS_CODES.OK).json(new apiResponse(STATUS_CODES.OK, drop, 'Drop deleted successfully', true));
   } catch (error) {
     next(new apiError(STATUS_CODES.BAD_REQUEST, 'Failed to delete drop', error));
   }

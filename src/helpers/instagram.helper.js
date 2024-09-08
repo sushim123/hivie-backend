@@ -1,6 +1,6 @@
 import axios from 'axios';
 import {API_INSTA_GRAPH, INSTA_GRAPH_URL, OPTIONS_INSTA, STATUS_CODES} from '../constants.js';
-// import InstagramData from '../models/instagramData.model.js';
+import InstagramData from '../models/instagramData.model.js';
 import {apiError} from '../utils/apiError.util.js';
 const accessToken = process.env.INSTA_ACCESS_TOKEN;
 
@@ -64,4 +64,47 @@ export const calculateMetrics = (businessInfo) => {
     numberOfPosts > 0 ? ((totalLikes + totalComments) / (numberOfPosts * businessInfo.followers_count)) * 100 : 0;
 
   return {averageLikes, averageComments, engagementRate};
+};
+export const fetchMediaDataFromPermalink = async (permalink) => {
+  try {
+    const response = await InstagramData.findOne({'data.media.permalink': permalink});
+    if (response) {
+      const media = response.data.media.find((mediaItem) => mediaItem.permalink === permalink);
+      return media || null;
+    }
+    return null;
+  } catch (error) {
+    console.error(`Error fetching media data for permalink ${permalink}:`, error);
+    return null;
+  }
+};
+export const transformMediaData = (mediaData) => {
+  return mediaData.map((item) => ({
+    id: item.id || '',
+    caption: item.caption || '',
+    media_type: item.media_type || '',
+    media_url: item.media_url || '',
+    thumbnail_url: item.thumbnail_url || '',
+    permalink: item.permalink || '',
+    timestamp: item.timestamp ? new Date(item.timestamp) : new Date(),
+    like_count: item.like_count || 0,
+    comments_count: item.comments_count || 0
+  }));
+};
+
+// Function to create Instagram data object
+export const createInstagramDataObject = (businessInfo, mediaData, metrics) => {
+  return {
+    data: {
+      id: businessInfo.id,
+      username: businessInfo.username,
+      name: businessInfo.name,
+      profile_picture_url: businessInfo.profile_picture_url,
+      followers_count: businessInfo.followers_count,
+      follows_count: businessInfo.follows_count,
+      media_count: businessInfo.media_count,
+      media: transformMediaData(mediaData),
+      metrics: metrics
+    }
+  };
 };

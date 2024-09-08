@@ -3,7 +3,7 @@ import dotenv from 'dotenv'; // Loads environment variables from a .env file
 import {INSTA_CODE_PARAMS, INSTA_TOKEN_PARAMS} from '../configs/global.config.js';
 import {INSTA_URL, STATUS_CODES} from '../constants.js';
 import {calculateMetrics, getBusinessDiscovery, getUserInfo} from '../helpers/instagram.helper.js';
-import {createInstagramDataObject} from '../helpers/instagramData.helper.js';
+import {createInstagramDataObject} from '../helpers/instagram.helper.js';
 import InstagramData from '../models/instagramData.model.js';
 import {apiError} from '../utils/apiError.util.js';
 import {apiResponse} from '../utils/apiResponse.util.js';
