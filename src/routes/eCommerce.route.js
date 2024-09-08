@@ -1,5 +1,7 @@
 import express from 'express';
+import {STATUS_CODES} from '../constants.js';
 import {
+  
   addFlashsaleProduct,
   addItemToCart,
   createCart,
@@ -25,8 +27,12 @@ import {
   updateUser,
   updateUserAddress
 } from '../controllers/eCommerce.controller.js';
+import {apiError} from '../utils/apiError.util.js';
+import {apiResponse} from '../utils/apiResponse.util.js';
 import { asyncHandler } from '../utils/asyncHandler.util.js';
+
 const router = express.Router();
+
 // User Routes
 router.post('/user', asyncHandler(createUser));
 router.get('/user', asyncHandler(fetchAllUser  ));
@@ -53,10 +59,9 @@ router.get('/flashsale',asyncHandler(getAllFlashsaleProduct ) );
 router.get('/flashsale/:id',asyncHandler(fetchFlashsaleProductById) );
 //product Routes
 router.get('/product',asyncHandler(fetchAllProducts) );
-router.put('/product',asyncHandler(updateProduct ) );
 router.get('/product/:id',asyncHandler(fetchProductById) );
-//category Routes
 router.put('/category',asyncHandler(updateProduct) );
 router.get('/category',asyncHandler(fetchAllCategory) );
+
 router.get('/category/:id',asyncHandler(fetchCategoryById ) );
 export default router;
