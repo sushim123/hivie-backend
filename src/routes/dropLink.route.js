@@ -22,7 +22,7 @@ const fetchMediaDataFromPermalink = async (permalink) => {
   }
 };
 
-route.post(
+route.put(
   '/',
   asyncHandler(async (req, res, next) => {
     const { drop_id, brand_id, deliverables, user_id } = req.body;
@@ -144,35 +144,5 @@ route.delete(
   })
 );
 
-
-
-
-
-
-
-route.post('/sss', async (req, res) => {
-  const { permalink } = req.body; // Assuming permalink is sent in the body of the request
-
-  if (!permalink) {
-    return res.status(STATUS_CODES.BAD_REQUEST).json(new apiError(STATUS_CODES.BAD_REQUEST, 'Permalink is required.', 'No permalink provided.'));
-  }
-  try {
-    const instagramData = await InstagramData.findOne({ 'data.media.permalink': permalink });
-    if (instagramData) {
-      const media = instagramData.data.media.find(mediaItem => mediaItem.permalink  === permalink);
-
-      if (media) {
-        return res.status(STATUS_CODES.OK).json(new apiResponse(STATUS_CODES.OK, media, 'Media found.', true));
-      } else {
-        return res.status(STATUS_CODES.NOT_FOUND).json(new apiResponse(STATUS_CODES.NOT_FOUND, null, 'Media not found for the provided permalink.', false));
-      }
-    } else {
-      return res.status(STATUS_CODES.NOT_FOUND).json(new apiResponse(STATUS_CODES.NOT_FOUND, null, 'Permalink not found in the database.', false));
-    }
-  } catch (error) {
-    const errorMessage = error.message || 'An error occurred while checking the permalink.';
-    return res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json(new apiError(STATUS_CODES.INTERNAL_SERVER_ERROR, 'Error checking permalink.', errorMessage));
-  }
-});
 
 export default route;
