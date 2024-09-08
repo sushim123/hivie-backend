@@ -6,7 +6,7 @@ const MediaSchema = new Schema({
   id: { type: String, required: true },
   caption: { type: String },
   media_type: { type: String, required: true },
-  media_url: { type: String, required: true },
+  media_url: { type: String, required: false  },
   thumbnail_url: { type: String },
   permalink: { type: String, required: true },
   timestamp: { type: Date, required: true },
@@ -19,7 +19,8 @@ const DeliverableSchema = new Schema(
   {
     deliverable_id: {type: String, required: true},
     link: {type: String, required: true},
-    media : { MediaSchema }
+    // thumbnail_url: { type: String },
+    media : [ MediaSchema ]
   },
   {
     toObject: {getters: true, virtuals: false},

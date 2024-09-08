@@ -20,7 +20,6 @@ export const fetchDataByInstaAuth = async (req, res) => {
       const accessToken = tokenResponse.data.access_token;
       const userInfo = await getUserInfo(tokenResponse.data.access_token);
       const businessInfo = await getBusinessDiscovery(userInfo.username);
-
       res
         .status(STATUS_CODES.OK)
         .json(
@@ -69,7 +68,6 @@ export const fetchDataByUsername = async (req, res) => {
         .json(new apiError(STATUS_CODES.BAD_REQUEST, 'Error fetching or saving data.', error.response ? error.response.data : error.message));
     }
   } else {
-    // Handle the case where the username is not provided
     res.status(STATUS_CODES.BAD_GATEWAY).json(new apiError(STATUS_CODES.BAD_GATEWAY, 'Please provide a username', 'username not found'));
   }
 };
