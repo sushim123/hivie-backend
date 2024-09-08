@@ -11,7 +11,7 @@ export const createUser = async (req, res) => {
       res.status(STATUS_CODES.BAD_REQUEST).json(new apiError(STATUS_CODES.BAD_REQUEST, 'Failed to add newUser', err, false));
     }
   };
-export const fetchbyId =async (req, res) => {
+export const fetchById =async (req, res) => {
     try {
       const newUser = await User.findById(req.params.id);
       if (!newUser) return res.status(STATUS_CODES.NOT_FOUND).json({message: 'User not found'});
@@ -49,8 +49,8 @@ export const deleteUser = async (req, res) => {
 
   export const createUserAddress =async (req, res) => {
     try {
-      const {address_line1, address_line2, city, state, zipcode, country} = req.body;
-      if (!address_line1 || !city || !state || !zipcode || !country) {
+      const {address_line1, address_line2, city, state, zipCode, country} = req.body;
+      if (!address_line1 || !city || !state || !zipCode || !country) {
         return res.status(STATUS_CODES.BAD_REQUEST).json({message: 'Missing required fields'});
       }
       const address = new Address({
@@ -59,7 +59,7 @@ export const deleteUser = async (req, res) => {
         address_line2,
         city,
         state,
-        zipcode,
+        zipCode,
         country
       });
       await address.save();
@@ -204,7 +204,7 @@ export const deleteUser = async (req, res) => {
     } catch (err) {
       res
         .status(STATUS_CODES.INTERNAL_SERVER_ERROR)
-        .json((STATUS_CODES.INTERNAL_SERVER_ERROR, 'flashsale not found ', err.message, false));
+        .json((STATUS_CODES.INTERNAL_SERVER_ERROR, 'flashSale not found ', err.message, false));
     }
   }
   export const fetchFlashSaleProductById = async (req, res) => {
