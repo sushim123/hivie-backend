@@ -4,7 +4,7 @@ import DropLink from '../models/dropLink.model.js';
 import {apiError} from '../utils/apiError.util.js';
 import {apiResponse} from '../utils/apiResponse.util.js';
 import {asyncHandler} from '../utils/asyncHandler.util.js';
-import InstagramData from '../models/InstagramData.model.js';
+import InstagramData from '../models/instagramData.model.js';
 
 const route = Router();
 
@@ -38,7 +38,7 @@ route.post(
           };
         })
       );
-      // console.log('Deliverables with media data:', deliverablesWithMediaData); 
+      // console.log('Deliverables with media data:', deliverablesWithMediaData);
 
       const newDropLink = new DropLink({
         drop_id,
@@ -160,7 +160,7 @@ route.post('/sss', async (req, res) => {
     const instagramData = await InstagramData.findOne({ 'data.media.permalink': permalink });
     if (instagramData) {
       const media = instagramData.data.media.find(mediaItem => mediaItem.permalink  === permalink);
-      
+
       if (media) {
         return res.status(STATUS_CODES.OK).json(new apiResponse(STATUS_CODES.OK, media, 'Media found.', true));
       } else {

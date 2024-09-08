@@ -2,7 +2,7 @@ import axios from 'axios';
 import dotenv from 'dotenv'; // Loads environment variables from a .env file
 import {INSTA_CODE_PARAMS, INSTA_TOKEN_PARAMS} from '../configs/global.config.js';
 import {INSTA_URL, STATUS_CODES} from '../constants.js';
-import InstagramData from '../models/InstagramData.model.js';
+import InstagramData from '../models/instagramData.model.js';
 import {calculateMetrics, getBusinessDiscovery, getUserInfo} from '../helpers/instagram.helper.js';
 import { createInstagramDataObject } from '../helpers/instagramData.helper.js'
 import {apiError} from '../utils/apiError.util.js';
@@ -54,7 +54,7 @@ export const fetchDataByUsername = async (req, res) => {
       const businessInfo = await getBusinessDiscovery(username);
       const metrics = calculateMetrics(businessInfo);
       const mediaData = businessInfo.media?.data || [];
-      const instagramDataObject = createInstagramDataObject(businessInfo, mediaData, metrics);   
+      const instagramDataObject = createInstagramDataObject(businessInfo, mediaData, metrics);
       const instagramData = new InstagramData(instagramDataObject);
       await instagramData.save();
       const responseData = {businessInfo,metrics};

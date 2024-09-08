@@ -1,5 +1,5 @@
 import express from 'express';
-import {  User, Address, Product, Order, OrderItem, Cart, CartItem ,Category ,FlashSale  } from '../models/e_commerce.model.js';
+import {  User, Address, Product, Order, OrderItem, Cart, CartItem ,Category ,FlashSale  } from '../models/eCommerce.model.js';
 import {apiError} from '../utils/apiError.util.js';
 import {apiResponse} from '../utils/apiResponse.util.js';
 import { STATUS_CODES} from '../constants.js';
