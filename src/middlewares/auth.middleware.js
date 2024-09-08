@@ -19,6 +19,22 @@ export const isAuthenticated = asyncHandler(async (req, res, next) => {
   next(new apiError(STATUS_CODES.FORBIDDEN, 'Please login', ['Unauthorized']));
 });
 
+export const isAuthenticatedBrand = asyncHandler(async (req, res, next) => {
+  if (req.oidc.isAuthenticated()) {
+    const {email} = req.oidc.user;
+    let user = await User.findOne({email});
+    if (!user) {
+      user = new User(req.oidc.user);
+      user.role = 'brand';
+      await user.save();
+    }
+    req.user = user;
+    return next();
+  }
+  // Unauthorized access
+  next(new apiError(STATUS_CODES.FORBIDDEN, 'Please login', ['Unauthorized']));
+});
+
 // Middleware to check if user is an influencer or admin
 export const isInfluencer = (req, res, next) => {
   if (req.user.role === 'influencer' || req.user.role === 'admin') {

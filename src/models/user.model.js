@@ -9,12 +9,10 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: [true, 'Email is required'],
       lowercase: true,
-      unique: true, 
+      unique: true,
       trim: true,
       index: true
     },
-
-
 
     refreshToken: {type: String, default: ''},
     role: {
@@ -32,21 +30,6 @@ const userSchema = new mongoose.Schema(
   },
   {timestamps: true}
 );
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 userSchema.plugin(mongooseAggregatePaginate);
 export const User = mongoose.model('User', userSchema);
