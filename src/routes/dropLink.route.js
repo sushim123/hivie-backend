@@ -1,18 +1,18 @@
 import {Router} from 'express';
 import {DUPLICATE_ERROR_CODE, STATUS_CODES} from '../constants.js';
 import DropLink from '../models/dropLink.model.js';
+import InstagramData from '../models/instagramData.model.js';
 import {apiError} from '../utils/apiError.util.js';
 import {apiResponse} from '../utils/apiResponse.util.js';
 import {asyncHandler} from '../utils/asyncHandler.util.js';
-import InstagramData from '../models/instagramData.model.js';
 
 const route = Router();
 
 const fetchMediaDataFromPermalink = async (permalink) => {
   try {
-    const instagramData = await InstagramData.findOne({ 'data.media.permalink': permalink });
+    const instagramData = await InstagramData.findOne({'data.media.permalink': permalink});
     if (instagramData) {
-      const media = instagramData.data.media.find(mediaItem => mediaItem.permalink === permalink);
+      const media = instagramData.data.media.find((mediaItem) => mediaItem.permalink === permalink);
       return media || null;
     }
     return null;
@@ -25,7 +25,7 @@ const fetchMediaDataFromPermalink = async (permalink) => {
 route.put(
   '/',
   asyncHandler(async (req, res, next) => {
-    const { drop_id, brand_id, deliverables, user_id } = req.body;
+    const {drop_id, brand_id, deliverables, user_id} = req.body;
 
     try {
       const deliverablesWithMediaData = await Promise.all(
@@ -34,7 +34,7 @@ route.put(
           // console.log('Fetched media data:', mediaData); // Log the media data
           return {
             ...deliverable,
-            media: mediaData ? [mediaData] : [],
+            media: mediaData ? [mediaData] : []
           };
         })
       );
@@ -44,27 +44,18 @@ route.put(
         drop_id,
         brand_id,
         deliverables: deliverablesWithMediaData,
-        user_id,
+        user_id
       });
 
       await newDropLink.save();
-      res.status(STATUS_CODES.CREATED).json(
-        new apiResponse(
-          STATUS_CODES.CREATED,
-          newDropLink,
-          'Drop link saved successfully',
-          true
-        )
-      );
+      res
+        .status(STATUS_CODES.CREATED)
+        .json(new apiResponse(STATUS_CODES.CREATED, newDropLink, 'Drop link saved successfully', true));
     } catch (error) {
       if (error.code === DUPLICATE_ERROR_CODE) {
-        return next(
-          new apiError(STATUS_CODES.CONFLICT, 'Duplicate drop link entry')
-        );
+        return next(new apiError(STATUS_CODES.CONFLICT, 'Duplicate drop link entry'));
       }
-      next(
-        new apiError(STATUS_CODES.BAD_REQUEST, 'Failed to save drop link', error)
-      );
+      next(new apiError(STATUS_CODES.BAD_REQUEST, 'Failed to save drop link', error));
     }
   })
 );
@@ -143,6 +134,5 @@ route.delete(
     }
   })
 );
-
 
 export default route;

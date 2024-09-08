@@ -7,7 +7,18 @@ import {validateUserIds} from '../utils/validateSchema.util.js';
 // Create a new drop
 export const createDrop = async (req, res, next) => {
   try {
-    const {brand_id, title, description, cover_image, payout, start_date, end_date, deliverables,interested_users,assets} = req.body;
+    const {
+      brand_id,
+      title,
+      description,
+      cover_image,
+      payout,
+      start_date,
+      end_date,
+      deliverables,
+      interested_users,
+      assets
+    } = req.body;
     // Validate deliverables according to their type
     const validatedDeliverables = deliverables.map((deliverable) => {
       if (deliverable.deliverable_type === 'reel') {
@@ -94,7 +105,7 @@ export const getAllDrops = async (req, res, next) => {
 export const getDropsById = async (req, res, next) => {
   try {
     const {id} = req.params;
-    const fetchedDrops = await Drop.find({"_id":id});
+    const fetchedDrops = await Drop.find({_id: id});
     if (!fetchedDrops.length) {
       return next(new apiError(STATUS_CODES.NOT_FOUND, 'No drops found by id ${id}'));
     }
@@ -197,7 +208,6 @@ export const advancedSearchDrops = async (req, res, next) => {
       if (!filteredDrops.length) {
         return next(new apiError(STATUS_CODES.NOT_FOUND, `No drops with "${type}" deliverables found`));
       }
-
       drops = filteredDrops;
     }
 
@@ -239,4 +249,4 @@ export const toggleInterested = async (req, res, next) => {
   } catch (error) {
     next(new apiError(STATUS_CODES.BAD_REQUEST, 'Failed to toggle interested', error));
   }
-}
+};

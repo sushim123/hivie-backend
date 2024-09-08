@@ -1,5 +1,5 @@
 import {Router} from 'express';
-import {getAuthInstaCode, fetchDataByInstaAuth, fetchDataByUsername} from '../controllers/insta.controller.js';
+import {fetchDataByInstaAuth, fetchDataByUsername, getAuthInstaCode} from '../controllers/insta.controller.js';
 
 const route = Router();
 

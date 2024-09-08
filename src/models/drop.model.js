@@ -1,18 +1,18 @@
 import mongoose from 'mongoose';
 
-const { Schema, model } = mongoose;
+const {Schema, model} = mongoose;
 
 // Schema for Reels
 const ReelSchema = new Schema({
-  title: { type: String, required: true },
-  time_duration: { type: Number, required: true }, // Time in minutes
-  description: { type: String }
+  title: {type: String, required: true},
+  time_duration: {type: Number, required: true}, // Time in minutes
+  description: {type: String}
 });
 
 // Schema for Posts
 const PostSchema = new Schema({
-  title: { type: String, required: true },
-  description: { type: String, required: true }
+  title: {type: String, required: true},
+  description: {type: String, required: true}
 });
 
 // Schema for Deliverables
@@ -41,21 +41,24 @@ const DeliverableSchema = new Schema({
       message: (props) => `Details do not match the schema for the selected deliverable type: ${props.value}`
     }
   }
-});//{ _id: false } removed to get _id in deliverables
+}); //{ _id: false } removed to get _id in deliverables
 
 // Drop Schema with embedded Deliverables
-const DropSchema = new Schema({
-  brand_id: { type: Schema.Types.ObjectId, ref: 'Brand', required: true },
-  title: { type: String, required: [true, 'Title is required'] },
-  description: { type: String, required: [true, 'Description is required'] },
-  cover_image: { type: String, default: '' },
-  payout: { type: Number, required: [true, 'Payout is required'] },
-  start_date: { type: Date, required: [true, 'Start date is required'] },
-  end_date: { type: Date, required: [true, 'End date is required'] },
-  deliverables: [DeliverableSchema], // Array of embedded deliverables
-  interested_users: [{ type: Schema.Types.ObjectId, ref: 'User' }], // Array of user IDs who are interested in the drop
-  assets: [{ type: String, default: '' }]
-}, { timestamps: true });
+const DropSchema = new Schema(
+  {
+    brand_id: {type: Schema.Types.ObjectId, ref: 'Brand', required: true},
+    title: {type: String, required: [true, 'Title is required']},
+    description: {type: String, required: [true, 'Description is required']},
+    cover_image: {type: String, default: ''},
+    payout: {type: Number, required: [true, 'Payout is required']},
+    start_date: {type: Date, required: [true, 'Start date is required']},
+    end_date: {type: Date, required: [true, 'End date is required']},
+    deliverables: [DeliverableSchema], // Array of embedded deliverables
+    interested_users: [{type: Schema.Types.ObjectId, ref: 'User'}], // Array of user IDs who are interested in the drop
+    assets: [{type: String, default: ''}]
+  },
+  {timestamps: true}
+);
 
 const Drop = model('Drop', DropSchema);
 

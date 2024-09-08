@@ -1,6 +1,6 @@
 import bcrypt from 'bcrypt';
+import {STATUS_CODES} from '../constants.js';
 import {apiError} from './apiError.util';
-import { STATUS_CODES } from '../constants.js';
 
 export async function decryptHash(plainText, hashedKey) {
   try {

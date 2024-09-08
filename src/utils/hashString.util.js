@@ -1,5 +1,5 @@
 import bcrypt from 'bcrypt';
-import { STATUS_CODES } from '../constants.js';
+import {STATUS_CODES} from '../constants.js';
 
 export async function hashString(plainText) {
   try {

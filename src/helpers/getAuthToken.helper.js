@@ -1,6 +1,6 @@
 import axios from 'axios';
 import {OAUTH_CONFIG} from '../configs/global.config.js';
-import { apiError } from '../utils/apiError.util.js';
+import {apiError} from '../utils/apiError.util.js';
 
 // Export an asynchronous function to get an Auth0 access token
 export const getAuthToken = async () => {
@@ -19,7 +19,7 @@ export const getAuthToken = async () => {
       }
     );
     // Return the access token from the response data
-    return response.data.access_token
+    return response.data.access_token;
   } catch (error) {
     throw new apiError(error.status, 'Error fetching access token', [error.message]);
   }

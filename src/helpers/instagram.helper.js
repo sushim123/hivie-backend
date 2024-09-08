@@ -1,8 +1,7 @@
 import axios from 'axios';
-import { STATUS_CODES } from '../constants.js';
-import { API_INSTA_GRAPH, INSTA_GRAPH_URL, OPTIONS_INSTA } from '../constants.js';
+import {API_INSTA_GRAPH, INSTA_GRAPH_URL, OPTIONS_INSTA, STATUS_CODES} from '../constants.js';
 // import InstagramData from '../models/instagramData.model.js';
-import { apiError } from '../utils/apiError.util.js';
+import {apiError} from '../utils/apiError.util.js';
 const accessToken = process.env.INSTA_ACCESS_TOKEN;
 
 // Function to get user info
@@ -16,7 +15,9 @@ export const getUserInfo = async (accessToken) => {
     });
     return response.data;
   } catch (error) {
-    throw new apiError(error.response?.status || STATUS_CODES.INTERNAL_SERVER_ERROR, 'Error fetching user data', [error.message]);
+    throw new apiError(error.response?.status || STATUS_CODES.INTERNAL_SERVER_ERROR, 'Error fetching user data', [
+      error.message
+    ]);
   }
 };
 
@@ -34,7 +35,12 @@ export const getBusinessDiscovery = async (username) => {
     // Corrected logging statement
     return response.data.business_discovery;
   } catch (error) {
-    throw new apiError(error.response?.status || STATUS_CODES.INTERNAL_SERVER_ERROR, 'Error fetching business discovery info', error.message, false);
+    throw new apiError(
+      error.response?.status || STATUS_CODES.INTERNAL_SERVER_ERROR,
+      'Error fetching business discovery info',
+      error.message,
+      false
+    );
   }
 };
 
@@ -57,5 +63,5 @@ export const calculateMetrics = (businessInfo) => {
   const engagementRate =
     numberOfPosts > 0 ? ((totalLikes + totalComments) / (numberOfPosts * businessInfo.followers_count)) * 100 : 0;
 
-  return { averageLikes, averageComments, engagementRate };
+  return {averageLikes, averageComments, engagementRate};
 };

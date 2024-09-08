@@ -31,7 +31,7 @@ route.get(
     res.send(new apiResponse(STATUS_CODES.OK, accessToken, 'Token fetched successfully', true));
   })
 );
-route.get('/login',isAuthenticated, (req, res) => {
+route.get('/login', isAuthenticated, (req, res) => {
   res.oidc.login({
     returnTo: '/' // Optionally specify where to redirect after login
   });

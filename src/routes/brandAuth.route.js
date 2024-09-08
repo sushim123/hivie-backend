@@ -11,7 +11,9 @@ const route = Router();
 
 // Route to check if the user is authenticated
 route.get(
-  '/',requiresAuth(),isAuthenticatedBrand,
+  '/',
+  requiresAuth(),
+  isAuthenticatedBrand,
   asyncHandler(async (req, res, next) => {
     try {
       res.send(
@@ -35,7 +37,7 @@ route.get('/profile', isAuthenticatedBrand, async (req, res, next) => {
 });
 
 route.get('/logout', requiresAuth(), (req, res, next) => {
-    // res.send('hi');
-    res.redirect('/logout');
-  });
+  // res.send('hi');
+  res.redirect('/logout');
+});
 export default route;
