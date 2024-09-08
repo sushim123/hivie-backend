@@ -222,7 +222,6 @@ export const toggleInterested = async (req, res, next) => {
   try {
     const {id} = req.params;
     const {user_id} = req.body;
-    if (user_id) validateUserIds(user_id);
     const drop = await Drop.findById(id);
     if (!drop) {
       return next(new apiError(STATUS_CODES.NOT_FOUND, 'Drop not found'));
