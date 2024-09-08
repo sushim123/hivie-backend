@@ -107,7 +107,7 @@ export const getDropsById = async (req, res, next) => {
     const {id} = req.params;
     const fetchedDrops = await Drop.find({_id: id});
     if (!fetchedDrops.length) {
-      return next(new apiError(STATUS_CODES.NOT_FOUND, 'No drops found by id ${id}'));
+      return next(new apiError(STATUS_CODES.NOT_FOUND, `No drops found by id ${id}`));
     }
     res.json(new apiResponse(STATUS_CODES.OK, fetchedDrops, `Drops fetched successfully by id ${id}`, true));
   } catch (error) {
@@ -156,14 +156,12 @@ export const getDropStats = async (req, res, next) => {
   }
 };
 
-// Search drops
 export const searchDrops = async (req, res, next) => {
   try {
     const {query, start_date, end_date} = req.query;
-
+    // Convert start_date and end_date to ISO format
     const startDate = start_date ? new Date(`${start_date}${START_OF_DAY}`) : undefined;
     const endDate = end_date ? new Date(`${end_date}${END_OF_DAY}`) : undefined;
-
     const searchQuery = {
       $and: [
         {
@@ -176,9 +174,8 @@ export const searchDrops = async (req, res, next) => {
         },
         startDate ? {start_date: {$gte: startDate}} : {},
         endDate ? {end_date: {$lte: endDate}} : {}
-      ].filter(Boolean)
+      ].filter(Boolean) // Remove empty conditions
     };
-
     const drops = await Drop.find(searchQuery);
     res
       .status(STATUS_CODES.OK)
@@ -188,41 +185,48 @@ export const searchDrops = async (req, res, next) => {
   }
 };
 
-// Advanced search and sorting
 export const advancedSearchDrops = async (req, res, next) => {
   try {
     const {type, dateField, sortOrder} = req.query;
     const validDateFields = ['start_date', 'end_date'];
     const validSortOrders = ['asc', 'desc'];
     let drops = [];
-
     if (type) {
       drops = await Drop.find({});
+      if (!drops.length) {
+        return next(new apiError(STATUS_CODES.FORBIDDEN, 'No drops found'));
+      }
       const filteredDrops = drops
         .map((drop) => {
           drop.deliverables = drop.deliverables.filter((d) => d.deliverable_type === type);
           return drop;
         })
         .filter((drop) => drop.deliverables.length > 0);
-
       if (!filteredDrops.length) {
         return next(new apiError(STATUS_CODES.NOT_FOUND, `No drops with "${type}" deliverables found`));
       }
       drops = filteredDrops;
     }
-
     if (dateField && sortOrder) {
-      if (!validDateFields.includes(dateField) || !validSortOrders.includes(sortOrder)) {
-        return next(new apiError(STATUS_CODES.BAD_REQUEST, 'Invalid sort criteria'));
+      if (!validDateFields.includes(dateField)) {
+        return next(new apiError(STATUS_CODES.BAD_REQUEST, 'Invalid date field for sorting'));
       }
-      drops = drops.length ? drops : await Drop.find({});
-      drops = drops.sort((a, b) =>
-        a[dateField] > b[dateField] ? (sortOrder === 'desc' ? -1 : 1) : sortOrder === 'desc' ? 1 : -1
-      );
+      const sortOrderValue = sortOrder === 'desc' ? -1 : 1;
+      if (!validSortOrders.includes(sortOrder)) {
+        return next(new apiError(STATUS_CODES.BAD_REQUEST, 'Invalid sort order, must be either "asc" or "desc"'));
+      }
+      if (!drops.length) {
+        drops = await Drop.find({});
+      }
+      drops = drops.sort((a, b) => (a[dateField] > b[dateField] ? sortOrderValue : -sortOrderValue));
+      if (!drops.length) {
+        return next(new apiError(STATUS_CODES.NOT_FOUND, 'No drops found for sorting'));
+      }
     }
-
     if (!drops.length) {
-      return next(new apiError(STATUS_CODES.BAD_REQUEST, 'Please provide valid query parameters'));
+      return next(
+        new apiError(STATUS_CODES.BAD_REQUEST, 'Please provide valid query parameters for filtering or sorting.')
+      );
     }
     res.status(STATUS_CODES.OK).json(new apiResponse(STATUS_CODES.OK, drops, 'Drops fetched successfully', true));
   } catch (error) {
