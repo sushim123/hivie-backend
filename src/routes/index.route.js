@@ -8,7 +8,6 @@ import {asyncHandler} from '../utils/asyncHandler.util.js';
 const {requiresAuth} = pkg;
 
 const route = Router();
-
 // Route to check if the user is authenticated
 route.get(
   '/',
