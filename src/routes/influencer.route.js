@@ -9,20 +9,13 @@ import {
   fetchProfile,
   logout,
 } from '../controllers/influencer.controller.js';
-
 const route = Router();
-
 // Route to check if the user is authenticated
 route.get('/', asyncHandler(fetchAuthentication));
-
 // Route to fetch an OAuth access token
 route.get('/oauth/token', isAuthenticated, asyncHandler(fetchAuthenticationAccessToken));
-
 // Route to log in
-route.get('/login', isAuthenticated, (req, res) => {
-  res.oidc.login({ returnTo: '/' });
-});
-
+route.get('/login', isAuthenticated, (req, res) => {res.oidc.login({ returnTo: '/' });});
 // Route to display the user's profile information
 route.get('/profile', isAuthenticated, asyncHandler(fetchProfile));
 
