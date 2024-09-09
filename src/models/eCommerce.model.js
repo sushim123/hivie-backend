@@ -2,12 +2,12 @@ import mongoose from 'mongoose';
 const {Schema} = mongoose;
 
 // User Schema
-const userSchema = new Schema({
-  name: {type: String},
-  created_at: {type: Date, default: Date.now},
-  updated_at: {type: Date, default: Date.now}
-});
-const User = mongoose.model('EUser', userSchema);
+// const userSchema = new Schema({
+//   name: {type: String},
+//   created_at: {type: Date, default: Date.now},
+//   updated_at: {type: Date, default: Date.now}
+// });
+// const User = mongoose.model('EUser', userSchema);
 
 // Address Schema
 const addressSchema = new Schema({
@@ -101,4 +101,4 @@ const cartItemSchema = new Schema({
 const CartItem = mongoose.model('CartItem', cartItemSchema);
 
 // Export all models
-export {Address, Cart, CartItem, Category, FlashSale, Order, OrderItem, Product, User};
+export {Address, Cart, CartItem, Category, FlashSale, Order, OrderItem, Product};

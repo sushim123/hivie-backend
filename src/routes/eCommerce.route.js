@@ -6,16 +6,12 @@ import {
   addProduct,
   createCart,
   createOrder,
-  createUser,
-  createUserAddress,
-  deleteUser,
-  deleteUSerAddress,
-  fetchAddressById,
+  // createUserAddress,
+  // deleteUSerAddress,
+  // fetchAddressById,
   fetchAllCategory,
   fetchAllItemsInCart,
   fetchAllProducts,
-  fetchAllUser,
-  fetchById,
   fetchCategoryById,
   fetchFlashSaleProductById,
   fetchOrderById,
@@ -23,24 +19,19 @@ import {
   fetchProductById,
   getAllFlashSaleProduct,
   updateOrderStatus,
-  updateUser,
-  updateUserAddress
+  // updateUserAddress
 } from '../controllers/eCommerce.controller.js';
 import { asyncHandler } from '../utils/asyncHandler.util.js';
 
 const router = express.Router();
 
-// User Routes
-router.post('/user', asyncHandler(createUser));
-router.get('/user', asyncHandler(fetchAllUser));
-router.get('/user/:id', asyncHandler(fetchById));
-router.put('/user/:id', asyncHandler(updateUser));
-router.delete('/user/:id', asyncHandler(deleteUser));
-//address Routes
-router.post('/user/:id/address', asyncHandler(createUserAddress));
-router.get('/user/:id/address', asyncHandler(fetchAddressById));
-router.put('/address/:addressId', asyncHandler(updateUserAddress));
-router.delete('/address/:addressId', asyncHandler(deleteUSerAddress));
+
+// //address Routes
+// router.post('/user/:id/address', asyncHandler(createUserAddress));
+// router.get('/user/:id/address', asyncHandler(fetchAddressById));
+// router.put('/address/:addressId', asyncHandler(updateUserAddress));
+// router.delete('/address/:addressId', asyncHandler(deleteUSerAddress));
+
 //order Routes
 router.post('/order', asyncHandler(createOrder));
 router.get('/order/:userId', asyncHandler(fetchOrderByUserId));
