@@ -1,7 +1,9 @@
 import express from 'express';
 import {
+  addCategoryName,
   addFlashSaleProduct,
   addItemToCart,
+  addProduct,
   createCart,
   createOrder,
   createUser,
@@ -13,7 +15,7 @@ import {
   fetchAllItemsInCart,
   fetchAllProducts,
   fetchAllUser,
-  fetchbyId,
+  fetchById,
   fetchCategoryById,
   fetchFlashSaleProductById,
   fetchOrderById,
@@ -31,7 +33,7 @@ const router = express.Router();
 // User Routes
 router.post('/user', asyncHandler(createUser));
 router.get('/user', asyncHandler(fetchAllUser));
-router.get('/user/:id', asyncHandler(fetchbyId));
+router.get('/user/:id', asyncHandler(fetchById));
 router.put('/user/:id', asyncHandler(updateUser));
 router.delete('/user/:id', asyncHandler(deleteUser));
 //address Routes
@@ -48,7 +50,7 @@ router.patch('/order/:id/status', asyncHandler(updateOrderStatus));
 router.post('/cart', asyncHandler(createCart));
 router.post('/cart/item', asyncHandler(addItemToCart));
 router.get('/:cart_id/item', asyncHandler(fetchAllItemsInCart));
-//flasesale Routes
+//flashSale Routes
 router.post('/flashSale', asyncHandler(addFlashSaleProduct));
 router.get('/flashSale', asyncHandler(getAllFlashSaleProduct));
 router.get('/flashSale/:id', asyncHandler(fetchFlashSaleProductById));

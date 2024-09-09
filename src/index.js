@@ -37,10 +37,10 @@ import brandAuthRoutes from './routes/brandAuth.route.js';
 import dropRoutes from './routes/drop.route.js';
 import dropLinkRoutes from './routes/dropLink.route.js';
 import eCommerceRoutes from './routes/eCommerce.route.js';
-import indexRoutes from './routes/index.route.js';
+import influencerRoute from './routes/influencer.route.js';
 import instaRoutes from './routes/insta.routes.js';
 
-app.use('/', indexRoutes);
+app.use('/', influencerRoute);
 app.use('/api/v1/brand', brandAuthRoutes);
 app.use('/api/v1/insta', instaRoutes);
 app.use('/api/v1/drops', dropRoutes);
