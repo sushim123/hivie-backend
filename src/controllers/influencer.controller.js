@@ -2,7 +2,7 @@ import { STATUS_CODES } from '../constants.js';
 import { getAuthToken } from '../helpers/getAuthToken.helper.js';
 import { apiResponse } from '../utils/apiResponse.util.js';
 
-export const fetchAuthentication = async (req, res, next) => {
+export const fetchAuthenticationInfluencer = async (req, res, next) => {
   try {
     res.send(
       new apiResponse(
@@ -18,7 +18,7 @@ export const fetchAuthentication = async (req, res, next) => {
 };
 
 // OAuth access token
-export const fetchAuthenticationAccessToken = async (req, res, next) => {
+export const fetchInfluenderAuthenticationAccessToken = async (req, res, next) => {
   try {
     const accessToken = await getAuthToken();
     res.send(new apiResponse(STATUS_CODES.OK, accessToken, 'Token fetched successfully', true));
@@ -27,7 +27,7 @@ export const fetchAuthenticationAccessToken = async (req, res, next) => {
   }
 };
 
-export const fetchProfile = async (req, res, next) => {
+export const fetchProfileOfInfluencer = async (req, res, next) => {
   try {
     res.send(new apiResponse(STATUS_CODES.OK, req.oidc.user, 'Dashboard fetched successfully', true));
   } catch (error) {
@@ -35,7 +35,7 @@ export const fetchProfile = async (req, res, next) => {
   }
 };
 
-export const logout = async (req, res, next) => {
+export const logoutInfluender = async (req, res, next) => {
   try {
     req.oidc.logout(); // Clear the session and logout the user
     return res.send(new apiResponse(STATUS_CODES.OK, null, 'User logged out successfully', true));

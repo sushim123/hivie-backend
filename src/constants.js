@@ -18,7 +18,7 @@ export const STATUS_CODES = {
   NOT_MODIFIED: 304, // Indicates that the resource has not been modified since the last request.
   TEMPORARY_REDIRECT: 307, // The request should be repeated with another URI; however, future requests should still use the original URI.
   PERMANENT_REDIRECT: 308, // The request and all future requests should be repeated using another URI.
-
+  
   // 4xx Client Errors - The request contains bad syntax or cannot be fulfilled.
   BAD_REQUEST: 400, // The server could not understand the request due to invalid syntax.
   UNAUTHORIZED: 401, // The client must authenticate itself to get the requested response.
