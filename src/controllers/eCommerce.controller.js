@@ -1,19 +1,8 @@
 import {STATUS_CODES} from '../constants.js';
 import {Address,Cart,CartItem,Category,FlashSale,Order,OrderItem,Product} from '../models/eCommerce.model.js';
-import {User} from '../models/user.model.js';
 import {apiError} from '../utils/apiError.util.js';
-// export const createUser = async (req, res) => {
-//     try {
-//       const newUser = new User(req.body);
-//       await newUser.save();
-//       res.status(STATUS_CODES.CREATED).json(newUser);
-//     } catch (err) {
-//       res.status(STATUS_CODES.BAD_REQUEST).json(new apiError(STATUS_CODES.BAD_REQUEST, 'Failed to add newUser', err, false));
-//     }
-//   };
 
-
-  export const createUserAddress =async (req, res) => {
+export const createUserAddress =async (req, res) => {
     try {
       const {address_line1, address_line2, city, state, zipCode, country} = req.body;
       if (!address_line1 || !city || !state || !zipCode || !country) {

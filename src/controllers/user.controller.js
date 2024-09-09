@@ -1,6 +1,16 @@
 import {User} from '../models/user.model.js';
 import {STATUS_CODES} from '../constants.js';
 
+// export const createUser = async (req, res) => {
+//     try {
+//       const newUser = new User(req.body);
+//       await newUser.save();
+//       res.status(STATUS_CODES.CREATED).json(newUser);
+//     } catch (err) {
+//       res.status(STATUS_CODES.BAD_REQUEST).json(new apiError(STATUS_CODES.BAD_REQUEST, 'Failed to add newUser', err, false));
+//     }
+//   };
+
 export const fetchById =async (req, res) => {
     try {
       const newUser = await User.findById(req.params.id);
