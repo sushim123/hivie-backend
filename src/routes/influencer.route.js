@@ -8,7 +8,7 @@ import {
   fetchInfluenderAuthenticationAccessToken,
   fetchProfileOfInfluencer,
   logoutInfluender,
-} from '../controllers/Influencer.controller.js';
+} from '../controllers/influencer.controller.js';
 const route = Router();
 // Route to check if the user is authenticated
 route.get('/', asyncHandler(fetchAuthenticationInfluencer));
