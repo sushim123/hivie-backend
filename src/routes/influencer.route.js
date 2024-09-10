@@ -17,7 +17,7 @@ route.get('/oauth/token', isAuthenticated, asyncHandler(fetchInfluenderAuthentic
 // Route to log in
 route.get('/login', isAuthenticated, (req, res) => {res.oidc.login({ returnTo: '/' });});
 // Route to display the user's profile information
-route.get('/profile', isAuthenticated, asyncHandler(fetchProfileOfInfluencer));
+route.get('/profile', isAuthenticated, asyncHandler(fetchProfileOfInfluencer) );
 // Route to log out the user, requires the user to be authenticated
 route.get('/logout', requiresAuth, asyncHandler(logoutInfluender ));
 export default route;

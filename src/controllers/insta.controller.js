@@ -8,6 +8,7 @@ import InstagramData from '../models/instagramData.model.js';
 import {apiError} from '../utils/apiError.util.js';
 import {apiResponse} from '../utils/apiResponse.util.js';
 import {asyncHandler} from '../utils/asyncHandler.util.js';
+import { User } from '../models/user.model.js';
 dotenv.config({path: './.env'});
 export const fetchDataByInstaAuth = async (req, res) => {
   const authCode = req.query.code;
@@ -20,6 +21,12 @@ export const fetchDataByInstaAuth = async (req, res) => {
       const accessToken = tokenResponse.data.access_token;
       const userInfo = await getUserInfo(tokenResponse.data.access_token);
       const businessInfo = await getBusinessDiscovery(userInfo.username);
+
+      const { email } = req.oidc.user;
+      if (!email) {
+        throw new apiError(STATUS_CODES.UNAUTHORIZED, 'Email not found in user info');
+      }
+      await User.findOneAndUpdate({ email }, { isTemporary: false });
       res
         .status(STATUS_CODES.OK)
         .json(
@@ -61,7 +68,6 @@ export const fetchDataByUsername = async (req, res) => {
     const existingData = await InstagramData.findOne({'data.username': username});
 
     if (existingData) {
-      // Update existing data with the new fetched data
       existingData.data = instagramDataObject.data; // Replace with new data
       await existingData.save();
       return res
