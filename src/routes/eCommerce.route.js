@@ -18,13 +18,11 @@ import {
   fetchOrderByUserId,
   fetchProductById,
   getAllFlashSaleProduct,
-  updateOrderStatus,
-  // updateUserAddress
+  updateOrderStatus
 } from '../controllers/eCommerce.controller.js';
-import { asyncHandler } from '../utils/asyncHandler.util.js';
-
+import {isAdmin, isAuthenticated} from '../middlewares/auth.middleware.js';
+import {asyncHandler} from '../utils/asyncHandler.util.js';
 const router = express.Router();
-
 
 // //address Routes
 // router.post('/user/:id/address', asyncHandler(createUserAddress));
@@ -33,24 +31,24 @@ const router = express.Router();
 // router.delete('/address/:addressId', asyncHandler(deleteUSerAddress));
 
 //order Routes
-router.post('/order', asyncHandler(createOrder));
-router.get('/order/:userId', asyncHandler(fetchOrderByUserId));
-router.get('/order/:id', asyncHandler(fetchOrderById));
-router.patch('/order/:id/status', asyncHandler(updateOrderStatus));
+router.post('/order', isAuthenticated, isAdmin, asyncHandler(createOrder));
+router.get('/order/:userId', isAuthenticated, asyncHandler(fetchOrderByUserId));
+router.get('/order/:id', isAuthenticated, asyncHandler(fetchOrderById));
+router.patch('/order/:id/status', isAuthenticated, isAdmin, asyncHandler(updateOrderStatus));
 //cart Routes
-router.post('/cart', asyncHandler(createCart));
-router.post('/cart/item', asyncHandler(addItemToCart));
-router.get('/:cart_id/item', asyncHandler(fetchAllItemsInCart));
+router.post('/cart', isAuthenticated, asyncHandler(createCart));
+router.post('/cart/item', isAuthenticated, asyncHandler(addItemToCart));
+router.get('/:cart_id/item', isAuthenticated, asyncHandler(fetchAllItemsInCart));
 //flashSale Routes
-router.post('/flashSale', asyncHandler(addFlashSaleProduct));
-router.get('/flashSale', asyncHandler(getAllFlashSaleProduct));
-router.get('/flashSale/:id', asyncHandler(fetchFlashSaleProductById));
+router.post('/flashSale', isAuthenticated, isAdmin, asyncHandler(addFlashSaleProduct));
+router.get('/flashSale', isAuthenticated, asyncHandler(getAllFlashSaleProduct));
+router.get('/flashSale/:id', isAuthenticated, asyncHandler(fetchFlashSaleProductById));
 //product Routes
-router.post('/product', asyncHandler(addProduct));
-router.get('/product/:id', asyncHandler(fetchProductById));
-router.get('/product', asyncHandler(fetchAllProducts));
+router.post('/product', isAuthenticated, isAdmin, asyncHandler(addProduct));
+router.get('/product/:id', isAuthenticated, asyncHandler(fetchProductById));
+router.get('/product', isAuthenticated, asyncHandler(fetchAllProducts));
 //category Routes
-router.post('/category', asyncHandler(addCategoryName));
-router.get('/category', asyncHandler(fetchAllCategory));
-router.get('/category/:id', asyncHandler(fetchCategoryById));
+router.post('/category', isAuthenticated, isAdmin, asyncHandler(addCategoryName));
+router.get('/category', isAuthenticated, asyncHandler(fetchAllCategory));
+router.get('/category/:id', isAuthenticated, asyncHandler(fetchCategoryById));
 export default router;
