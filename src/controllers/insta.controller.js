@@ -26,7 +26,8 @@ export const fetchDataByInstaAuth = async (req, res) => {
       if (!email) {
         throw new apiError(STATUS_CODES.UNAUTHORIZED, 'Email not found in user info');
       }
-      await User.findOneAndUpdate({ email }, { isTemporary: false });
+      await User.findOneAndUpdate({ email }, { isTemporary: false , expiresAt: null });
+      
       res
         .status(STATUS_CODES.OK)
         .json(

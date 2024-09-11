@@ -11,7 +11,7 @@ mongoose
   })
   .catch((err) => {
     // Log any connection errors to the console
-    console.log(err.message);
+    console.log(err.message,);
   });
 
 // Listen for the 'connected' event, which indicates a successful connection to the database

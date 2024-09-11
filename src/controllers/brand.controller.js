@@ -1,7 +1,5 @@
-import pkg from 'express-openid-connect';
 import {STATUS_CODES} from '../constants.js';
 import {apiResponse} from '../utils/apiResponse.util.js';
-const {requiresAuth} = pkg;
 
 
 export const fetchAuthenticationBrand = async (req, res) => {
