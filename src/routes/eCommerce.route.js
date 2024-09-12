@@ -31,10 +31,10 @@ const router = express.Router();
 // router.delete('/address/:addressId', asyncHandler(deleteUSerAddress));
 
 //order Routes
-router.post('/order', isAuthenticated, isAdmin, asyncHandler(createOrder));
+router.post('/order', isAuthenticated, asyncHandler(createOrder));
 router.get('/order/:userId', isAuthenticated, asyncHandler(fetchOrderByUserId));
 router.get('/order/:id', isAuthenticated, asyncHandler(fetchOrderById));
-router.patch('/order/:id/status', isAuthenticated, isAdmin, asyncHandler(updateOrderStatus));
+router.patch('/order/:id/status', isAuthenticated, asyncHandler(updateOrderStatus));
 //cart Routes
 router.post('/cart', isAuthenticated, asyncHandler(createCart));
 router.post('/cart/item', isAuthenticated, asyncHandler(addItemToCart));
@@ -49,6 +49,6 @@ router.get('/product/:id', isAuthenticated, asyncHandler(fetchProductById));
 router.get('/product', isAuthenticated, asyncHandler(fetchAllProducts));
 //category Routes
 router.post('/category', isAuthenticated, isAdmin, asyncHandler(addCategoryName));
-router.get('/category', isAuthenticated, asyncHandler(fetchAllCategory));
+router.get('/category', isAuthenticated,asyncHandler(fetchAllCategory));
 router.get('/category/:id', isAuthenticated, asyncHandler(fetchCategoryById));
 export default router;
