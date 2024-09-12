@@ -11,7 +11,7 @@ const platformLinksSchema = new mongoose.Schema({
   instagram: {
     type: String,
     required: function() {
-      return this.ownerDocument().role === 'brand';  
+      return this.ownerDocument().role === 'brand';
     },
   },
 }, { _id: false });

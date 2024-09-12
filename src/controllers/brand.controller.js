@@ -5,7 +5,7 @@ import {apiResponse} from '../utils/apiResponse.util.js';
 export const fetchAuthenticationBrand = async (req, res) => {
     try {
       res.send(
-        new apiResponse(STATUS_CODES.OK, req.oidc.isAuthenticated(), 'User login status fetched successfully', true)
+        new apiResponse(STATUS_CODES.OK, req.oidc.isAuthenticated(), 'Brand login status fetched successfully', true)
       );
     } catch (error) {
       throw new apiResponse(STATUS_CODES.BAD_REQUEST, 'Failed to fetch user login status', error);

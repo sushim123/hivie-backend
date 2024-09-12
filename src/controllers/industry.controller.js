@@ -1,25 +1,9 @@
-import { STATUS_CODES } from '../constants.js';
+import { STATUS_CODES, VALID_INDUSTRY_TYPES_AND_SUBTYPES } from '../constants.js';
 import { User } from '../models/user.model.js';
 import { apiError } from '../utils/apiError.util.js';
 import { apiResponse } from '../utils/apiResponse.util.js';
 
-const validIndustryTypesAndSubtypes = {
-  'Consumer Goods': ['FMCG', 'Consumer Electronics', 'Fashion & Apparel', 'Beauty & Personal Care'],
-  Technology: ['Software & Services', 'Hardware', 'Telecommunication'],
-  Automotive: ['Car Manufacturers', 'Motorcycles', 'Auto Parts & Accessories'],
-  Healthcare: ['Pharmaceuticals', 'Medical Devices', 'Health Insurance'],
-  Finance: ['Banks', 'Financial Services', 'Insurance'],
-  Retail: ['Brick-and-Mortar Retail', 'E-Commerce'],
-  'Food & Beverage': ['Restaurants', 'Alcoholic Beverages', 'Non-Alcoholic Beverages'],
-  'Media & Entertainment': ['Streaming Services', 'Traditional Media', 'Gaming'],
-  'Energy & Utilities': ['Oil & Gas', 'Renewable Energy', 'Utilities'],
-  'Transportation & Logistics': ['Airlines', 'Shipping & Logistics'],
-  'Hospitality & Tourism': ['Hotels & Resorts', 'Travel Agencies'],
-  'Real Estate': ['Residential & Commercial Real Estate'],
-  Telecommunications: ['Telecom Providers'],
-  'Education & E-Learning': ['Online Learning Platforms', 'Traditional Educational Institutions'],
-  'Aerospace & Defense': ['Aerospace', 'Defense']
-};
+const validIndustryTypesAndSubtypes = VALID_INDUSTRY_TYPES_AND_SUBTYPES;
 
 const validRanges = {
   numberOfProducts: ['1-5', '5-10', '10-20', '20-50', '50+'],
@@ -142,10 +126,8 @@ export const createOrUpdateBrandInfo = async (req, res) => {
 
 export const fetchBrandInfo = async (req, res) => {
   try {
-    // Fetch all users with a "brand" role and select only the brandInfo field
-    const users = await User.find({ role: 'brand' }).select('brandInfo').lean(); // Using .lean() for faster read performance
+    const users = await User.find({ role: 'brand' }).select('brandInfo').lean(); 
 
-    // Map the brandInfo from the users to return in the response
     const brandInfoData = users.map((user) => user.brandInfo);
 
     res.status(STATUS_CODES.OK).json(new apiResponse(STATUS_CODES.OK, brandInfoData, 'Brand info fetched successfully', true));

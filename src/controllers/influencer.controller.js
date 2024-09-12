@@ -34,7 +34,7 @@ export const fetchProfileOfInfluencer = async (req, res, next) => {
     let dbUser = await User.findOne({ email: user.email });
 
     if (!dbUser) {
-  
+
       dbUser = new User({
         name: user.name,
         email: user.email,
@@ -59,11 +59,11 @@ export const logoutInfluender = async (req, res, next) => {
       // Mark user as non-temporary upon logout if they are fully authorized
       const dbUser = await User.findOne({ email: user.email });
       if (dbUser && dbUser.isTemporary) {
-        dbUser.isTemporary = false; 
+        dbUser.isTemporary = false;
         await dbUser.save();
       }
     }
-    
+
     req.oidc.logout(); // Clear the session and logout the user
     res.send(new apiResponse(STATUS_CODES.OK, null, 'User logged out successfully', true));
   } catch (error) {
