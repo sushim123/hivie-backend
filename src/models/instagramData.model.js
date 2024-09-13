@@ -20,7 +20,10 @@ const MetricsSchema = new mongoose.Schema(
   {
     averageLikes: {type: Number, required: true},
     averageComments: {type: Number, required: true},
-    engagementRate: {type: Number, required: true}
+    engagementRate: {type: Number, required: true},
+    totalComments: {type: Number, required: true},
+    totalLikes: {type: Number, required: true},
+    totalShares: {type: Number, required: true, default: 0}
   },
   {_id: false} // Prevents auto-creation of an _id for subdocuments
 );
@@ -31,7 +34,7 @@ const BusinessInfoSchema = new mongoose.Schema(
     id: {type: String, required: true},
     username: {type: String, required: true, index: true},
     name: {type: String, required: true},
-    profile_picture_url: {type: String, required: true},
+    profile_picture_url: {type: String},
     followers_count: {type: Number, required: true},
     follows_count: {type: Number, required: true},
     media_count: {type: Number, required: true},
@@ -49,6 +52,5 @@ const InstagramDataSchema = new mongoose.Schema(
   {timestamps: true}
 );
 
-const InstagramData = mongoose.model('InstagramData', InstagramDataSchema);
+export const InstagramData = mongoose.model('InstagramData', InstagramDataSchema);
 
-export default InstagramData;
