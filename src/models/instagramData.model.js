@@ -23,7 +23,8 @@ const MetricsSchema = new mongoose.Schema(
     engagementRate: {type: Number, required: true},
     totalComments: {type: Number, required: true},
     totalLikes: {type: Number, required: true},
-    totalShares: {type: Number, required: true, default: 0}
+    totalShares: {type: Number, required: true, default: 0},
+    totalCountOfMediaInSevenDays: {type: Number, required: true, default: 0}
   },
   {_id: false} // Prevents auto-creation of an _id for subdocuments
 );

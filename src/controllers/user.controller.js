@@ -1,6 +1,5 @@
-import {STATUS_CODES} from '../constants.js';
+import {SCORE_WEIGHT, STATUS_CODES} from '../constants.js';
 import {User} from '../models/user.model.js';
-
 // export const createUser = async (req, res) => {
 //     try {
 //       const newUser = new User(req.body);
@@ -48,12 +47,33 @@ export const deleteUser = async (req, res) => {
 };
 
 export const calculateDigitalScore = async (req, res, next) => {
-  const response = await User.findById(req.params.id).populate('instaData');
-  const instaUserData = response?.instaData?.data;
-  const {follower,following}=instaUserData;
-  const {total_comments_count, total_like_count, total_share_count} = instaUserData?.metrics;
-  const engagementRate = ((total_comments_count + total_like_count + total_share_count) / follower) * 100;
-  const followerToFollowingRatio = follower / following;
-  const contentConsistency = 0;// no. of post in last 7 days.
-  const contentQuality = 0;// avg likes per post.
+  try {
+    const { id } = req.params;
+    const user = await User.findById(id).populate('instaData');
+
+    if (!user?.instaData?.data) {
+      return res.status(404).json({ message: 'User or Instagram data not found' });
+    }
+
+    const { followers_count, follows_count } = user.instaData.data;
+    const { totalComments = 0, totalLikes = 0, totalShares = 0, totalCountOfMediaInSevenDays = 0 } = user.instaData.data.metrics || {};
+
+    if (followers_count <= 0) {
+      return res.status(400).json({ message: 'Invalid follower count' });
+    }
+    const engagementRate = ((totalComments + totalLikes + totalShares) / followers_count) * 100;
+    const followerToFollowingRatio = follows_count > 0 ? followers_count / follows_count : 0;
+    const contentConsistency = totalCountOfMediaInSevenDays;
+    const contentQuality = totalCountOfMediaInSevenDays > 0 ? totalLikes / totalCountOfMediaInSevenDays : 0;
+
+    const rawScore =
+      engagementRate * SCORE_WEIGHT.ENGAGEMENT_RATE +
+      followerToFollowingRatio * SCORE_WEIGHT.FOLLOWER_FOLLOWING_RATIO +
+      contentConsistency * SCORE_WEIGHT.CONTENT_CONSISTENCY +
+      contentQuality * SCORE_WEIGHT.CONTENT_QUALITY;
+
+    res.json({follows_count, followers_count, engagementRate, followerToFollowingRatio, contentConsistency, contentQuality, rawScore});
+  } catch (error) {
+    next(error);
+  }
 };

@@ -18,7 +18,7 @@ export const STATUS_CODES = {
   NOT_MODIFIED: 304, // Indicates that the resource has not been modified since the last request.
   TEMPORARY_REDIRECT: 307, // The request should be repeated with another URI; however, future requests should still use the original URI.
   PERMANENT_REDIRECT: 308, // The request and all future requests should be repeated using another URI.
-  
+
   // 4xx Client Errors - The request contains bad syntax or cannot be fulfilled.
   BAD_REQUEST: 400, // The server could not understand the request due to invalid syntax.
   UNAUTHORIZED: 401, // The client must authenticate itself to get the requested response.
@@ -59,3 +59,9 @@ export const STATUS_CODES = {
 export const DUPLICATE_ERROR_CODE = 11000;
 export const START_OF_DAY = 'T00:00:00.000Z';
 export const END_OF_DAY = 'T23:59:59.999Z';
+export const SCORE_WEIGHT = {// must sum to 1
+  ENGAGEMENT_RATE: 0.45,
+  FOLLOWER_FOLLOWING_RATIO: 0.25,
+  CONTENT_CONSISTENCY: 0.15,
+  CONTENT_QUALITY: 0.15
+};

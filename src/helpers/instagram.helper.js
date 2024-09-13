@@ -48,11 +48,22 @@ export const calculateMetrics = (businessInfo) => {
   let totalLikes = 0;
   let totalComments = 0;
   let numberOfPosts = 0;
+  let totalCountOfMediaInSevenDays = 0;
+
+  // Calculate the date 7 days ago
+  const sevenDaysAgo = new Date();
+  sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
 
   if (businessInfo.media && businessInfo.media.data) {
     totalLikes = businessInfo.media.data.reduce((acc, media) => acc + (media.like_count || 0), 0);
     totalComments = businessInfo.media.data.reduce((acc, media) => acc + (media.comments_count || 0), 0);
     numberOfPosts = businessInfo.media.data.length;
+
+    // Filter media posted in the last 7 days
+    totalCountOfMediaInSevenDays = businessInfo.media.data.filter((media) => {
+      const mediaDate = new Date(media.timestamp);
+      return mediaDate >= sevenDaysAgo;
+    }).length;
   } else {
     throw new apiError(STATUS_CODES.BAD_GATEWAY, 'Unable to fetch media data', 'Media data not found');
   }
@@ -62,8 +73,16 @@ export const calculateMetrics = (businessInfo) => {
   const engagementRate =
     numberOfPosts > 0 ? ((totalLikes + totalComments) / (numberOfPosts * businessInfo.followers_count)) * 100 : 0;
 
-  return {averageLikes, averageComments, engagementRate,totalComments,totalLikes};
+  return {
+    averageLikes,
+    averageComments,
+    engagementRate,
+    totalComments,
+    totalLikes,
+    totalCountOfMediaInSevenDays // Newly added field for media count in the last 7 days
+  };
 };
+
 export const fetchMediaDataFromPermalink = async (permalink) => {
   try {
     const response = await InstagramData.findOne({'data.media.permalink': permalink});
