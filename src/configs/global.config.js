@@ -11,11 +11,11 @@ export const INSTA_TOKEN_PARAMS = {
   client_id: process.env.NODE_DEV_ENV ? process.env.INSTA_CLIENT_ID_1 : process.env.INSTA_CLIENT_ID,
   client_secret: process.env.NODE_DEV_ENV ? process.env.INSTA_CLIENT_SECRET_1 : process.env.INSTA_CLIENT_SECRET,
   grant_type: 'authorization_code',
-  redirect_uri: INSTA_REDIRECT_URL
+  redirect_uri: 'https://hivie-backend-ewk0.onrender.com/api/v1/insta/auth/callback'
 };
 export const INSTA_CODE_PARAMS = {
   client_id: process.env.NODE_DEV_ENV ? process.env.INSTA_CLIENT_ID_1 : process.env.INSTA_CLIENT_ID,
-  redirect_uri: INSTA_REDIRECT_URL,
+  redirect_uri: 'https://hivie-backend-ewk0.onrender.com/api/v1/insta/auth/callback',
   response_type: 'code',
   scope: 'user_profile,user_media'
 };
