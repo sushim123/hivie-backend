@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Influencer Authentication & Profile</title>
+  <script>
+    async function makeRequest(url, method = 'GET', body = null) {
+      try {
+        const options = {
+          method,
+          credentials: 'include',
+          headers: { 'Content-Type': 'application/json' },
+        };
+        if (body) options.body = JSON.stringify(body);
+        const response = await fetch(url, options);
+        return response.json();
+      } catch {
+        alert('An error occurred.');
+      }
+    }
+
+    function login() { location.href = '/login'; }
+    function logout() { location.href = '/logout'; }
+
+    async function authenticateWithInstagram() {
+      window.location.href = '/api/v1/insta/auth';
+    }
+
+    async function fetchProfile() {
+      makeRequest('/profile').then(data => {
+        if (data) {
+          sessionStorage.setItem('profileData', JSON.stringify(data));
+          showProfile();
+        }
+      });
+    }
+
+    function showProfile() {
+      const profile = JSON.parse(sessionStorage.getItem('profileData'))?.data;
+      if (!profile) return;
+
+      document.getElementById('profile-container').textContent = `Profile Url: ${profile.picture}
+        Nickname: ${profile.nickname}
+        Name: ${profile.name}
+        Email: ${profile.email}
+        Email Verified: ${profile.email_verified ? 'Yes' : 'No'}
+        Last Updated At: ${new Date(profile.updated_at).toLocaleString()}
+        User ID (sub): ${profile.sub}`;
+
+      // Populate the hidden email fields
+      document.getElementById('hiddenEmail').value = profile.email;
+
+      document.getElementById('profile-section').style.display = 'block';
+      document.getElementById('dashboard-section').style.display = 'none';
+      document.getElementById('pricing-section').style.display = 'block';
+      document.getElementById('fetch-data-section').style.display = 'block';
+      document.getElementById('platform-links-section').style.display = 'block';
+      document.getElementById('fetch-platform-links-section').style.display = 'block';
+    }
+
+    function showDashboard() {
+      document.getElementById('profile-section').style.display = 'none';
+      document.getElementById('dashboard-section').style.display = 'block';
+      document.getElementById('pricing-section').style.display = 'none';
+      document.getElementById('fetch-data-section').style.display = 'none';
+      document.getElementById('platform-links-section').style.display = 'none';
+      document.getElementById('fetch-platform-links-section').style.display = 'none';
+    }
+
+    async function submitPricing(event) {
+      event.preventDefault();
+      const email = document.getElementById('hiddenEmail').value; // Use hidden email field
+      const postPrice = parseFloat(document.getElementById('postPrice').value);
+      const reelPrice = parseFloat(document.getElementById('reelPrice').value);
+      const brandRange = parseInt(document.getElementById('brandRange').value, 10);
+
+      const requestBody = { email, postPrice, reelPrice, brandRange };
+
+      const response = await makeRequest('/api/v1/insta/submit-pricing', 'POST', requestBody);
+      document.getElementById('submitPricingResult').textContent = JSON.stringify(response, null, 2);
+    }
+
+    async function fetchDataByUsername(event) {
+      event.preventDefault();
+      const username = document.getElementById('username').value;
+
+      const response = await makeRequest(`/api/v1/insta/get-data/${username}`, 'GET');
+      document.getElementById('fetchDataResult').textContent = JSON.stringify(response, null, 2);
+    }
+
+    async function createPlatformLinks(event) {
+      event.preventDefault();
+      const email = document.getElementById('hiddenEmail').value; // Use hidden email field
+      const youtube = document.getElementById('youtube').value;
+      const tiktok = document.getElementById('tiktok').value;
+      const linkedin = document.getElementById('linkedin').value;
+      const discord = document.getElementById('discord').value;
+
+      const requestBody = { email, youtube, tiktok, linkedin, discord };
+
+      const response = await makeRequest('/api/v1/insta/highlights', 'POST', requestBody);
+      document.getElementById('platformLinksResult').textContent = JSON.stringify(response, null, 2);
+    }
+
+    async function fetchPlatformLinks() {
+      const email = document.getElementById('fetchPlatformEmail').value;
+
+      const response = await makeRequest(`/api/v1/insta/highlights/${encodeURIComponent(email)}`, 'GET');
+      document.getElementById('fetchPlatformLinksResult').textContent = JSON.stringify(response, null, 2);
+    }
+
+    async function handleInstagramCallback() {
+      const response = await makeRequest('/api/v1/insta/auth/callback', 'GET');
+      document.getElementById('instagramData').textContent = JSON.stringify(response, null, 2);
+    }
+
+    window.onload = async () => {
+      if (window.location.pathname === '/api/v1/insta/auth/callback') {
+        await handleInstagramCallback();
+      } else {
+        showDashboard();
+      }
+    };
+  </script>
+</head>
+<body>
+  <h3>Influencer Authentication & Profile</h3>
+  <div id="dashboard-section">
+    <button onclick="login()">Login</button>
+    <button onclick="fetchProfile()">Fetch Profile</button>
+    <button onclick="logout()">Logout</button>
+    <button onclick="authenticateWithInstagram()">Authenticate with Instagram</button>
+  </div>
+
+  <div id="profile-section" style="display: none;">
+    <h3>Profile Information</h3>
+    <div id="profile-container"></div>
+    <button onclick="showDashboard()">Back to Dashboard</button>
+  </div>
+
+  <div id="pricing-section" style="display: none;">
+    <h3>Submit Pricing</h3>
+    <form id="submitPricingForm" onsubmit="submitPricing(event)">
+      <input type="hidden" id="hiddenEmail"> <!-- Hidden email field -->
+      <label for="postPrice">Post Price:</label>
+      <input type="number" id="postPrice" name="postPrice" step="0.01" required>
+      <label for="reelPrice">Reel Price:</label>
+      <input type="number" id="reelPrice" name="reelPrice" step="0.01" required>
+      <label for="brandRange">Brand Range:</label>
+      <input type="number" id="brandRange" name="brandRange" min="1" max="10" required>
+      <button type="submit">Submit Pricing</button>
+    </form>
+    <pre id="submitPricingResult"></pre>
+  </div>
+
+  <div id="fetch-data-section" style="display: none;">
+    <h3>Fetch Data by Username</h3>
+    <form id="fetchDataForm" onsubmit="fetchDataByUsername(event)">
+      <label for="username">Username:</label>
+      <input type="text" id="username" name="username" required>
+      <button type="submit">Fetch Data</button>
+    </form>
+    <pre id="fetchDataResult"></pre>
+  </div>
+
+  <div id="platform-links-section" style="display: none;">
+    <h3>Create Platform Links</h3>
+    <form id="createPlatformLinksForm" onsubmit="createPlatformLinks(event)">
+      <input type="hidden" id="hiddenEmail"> <!-- Hidden email field -->
+      <label for="youtube">YouTube:</label>
+      <input type="url" id="youtube" name="youtube">
+      <label for="tiktok">TikTok:</label>
+      <input type="url" id="tiktok" name="tiktok">
+      <label for="linkedin">LinkedIn:</label>
+      <input type="url" id="linkedin" name="linkedin">
+      <label for="discord">Discord:</label>
+      <input type="url" id="discord" name="discord">
+      <button type="submit">Create Platform Links</button>
+    </form>
+    <pre id="platformLinksResult"></pre>
+  </div>
+
+  <div id="instagram-data" style="display: none;">
+    <h3>Instagram Data</h3>
+    <pre id="instagramData"></pre>
+  </div>
+</body>
+</html>

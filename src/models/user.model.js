@@ -3,6 +3,7 @@ import mongooseAggregatePaginate from 'mongoose-aggregate-paginate-v2';
 import { preSaveMiddleware, preFindOneAndUpdateMiddleware } from '../middlewares/userschema.middleware.js';
 
 // Platform Links Schema
+
 const platformLinksSchema = new mongoose.Schema({
   youtube: String,
   tiktok: String,
@@ -39,7 +40,7 @@ const industrySchema = new mongoose.Schema({
     required: true,
     enum: [
       'FMCG', 'Consumer Electronics', 'Fashion & Apparel', 'Beauty & Personal Care',
-      'Softwre a& Services', 'Hardware', 'Telecommunication', 'Car Manufacturers', 'Motorcycles',
+      'Software & Services', 'Hardware', 'Telecommunication', 'Car Manufacturers', 'Motorcycles',
       'Auto Parts & Accessories', 'Pharmaceuticals', 'Medical Devices', 'Health Insurance', 'Banks',
       'Financial Services', 'Insurance', 'Brick-and-Mortar Retail', 'E-Commerce', 'Restaurants',
       'Alcoholic Beverages', 'Non-Alcoholic Beverages', 'Streaming Services', 'Traditional Media',

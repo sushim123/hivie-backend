@@ -76,3 +76,6 @@ export const VALID_INDUSTRY_TYPES_AND_SUBTYPES =
 export const DUPLICATE_ERROR_CODE = 11000;
 export const START_OF_DAY = 'T00:00:00.000Z';
 export const END_OF_DAY = 'T23:59:59.999Z';
+
+//front end dashboard ----flow (follower count , following count , total media , avg. like/comment/post)
+//in vercel

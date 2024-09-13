@@ -29,7 +29,7 @@ app.use(auth(OAUTH_CONFIG));
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
-app.set('views', join(__dirname, 'views'));
+app.set('public', join(__dirname, 'public'));
 app.set('view engine', 'ejs');
 
 // Import and use routes
