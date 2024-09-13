@@ -15,7 +15,7 @@ route.get('/', asyncHandler(fetchAuthenticationInfluencer));
 // Route to fetch an OAuth access token
 route.get('/oauth/token', isAuthenticated, asyncHandler(fetchInfluenderAuthenticationAccessToken));
 // Route to log in
-route.get('/login', isAuthenticated, (req, res) => {res.oidc.login({ returnTo: '/' });});
+route.get('/login', isAuthenticated, (req, res) => {res.oidc.login({ returnTo: 'https://hivie-backend-ewk0.onrender.com/' });});
 // Route to display the user's profile information
 route.get('/profile', isAuthenticated, asyncHandler(fetchProfileOfInfluencer) );
 // Route to log out the user, requires the user to be authenticated
