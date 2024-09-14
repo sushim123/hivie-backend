@@ -4,7 +4,7 @@ import {isAuthenticatedBrand} from '../middlewares/auth.middleware.js';
 import {asyncHandler} from '../utils/asyncHandler.util.js';
 import
 {   fetchAuthenticationBrand,
-    fetchProfileOfbrand,
+    fetchProfileOfBrand,
     loginBrand,
     logoutBrand
 } from '../controllers/brand.controller.js'
@@ -32,7 +32,7 @@ route.get('/',requiresAuth(),isAuthenticatedBrand,asyncHandler(fetchAuthenticati
 //Route to login as brand
 route.get('/login', asyncHandler (loginBrand));
 // Route to display the brands profile information
-route.get('/profile', isAuthenticatedBrand,asyncHandler(fetchProfileOfbrand) );
+route.get('/profile', isAuthenticatedBrand,asyncHandler(fetchProfileOfBrand) );
 //Route to logout as Brand
 route.get('/logout', requiresAuth(), asyncHandler (logoutBrand));
 // Industry routes

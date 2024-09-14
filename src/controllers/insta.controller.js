@@ -22,24 +22,38 @@ export const fetchDataByInstaAuth = async (req, res) => {
       const userInfo = await getUserInfo(tokenResponse.data.access_token);
       const businessInfo = await getBusinessDiscovery(userInfo.username);
 
+      // Flatten the media data
+      const mediaArray = businessInfo.media?.data || [];
+
       const { email } = req.oidc.user;
       if (!email) {
         throw new apiError(STATUS_CODES.UNAUTHORIZED, 'Email not found in user info');
       }
       await User.findOneAndUpdate({ email }, { isTemporary: false , expiresAt: null });
-      
-      res
-        .status(STATUS_CODES.OK)
-        .json(
-          new apiResponse(STATUS_CODES.OK, {accessToken, userInfo, businessInfo}, 'All date fetched successfully.')
-        );
+      res.render('instagramAuthResult', {
+        accessToken,
+        userInfo,
+        businessInfo: { ...businessInfo, media: mediaArray },
+        error: null
+      });
     } catch (error) {
-      throw new apiError(STATUS_CODES.METHOD_NOT_ALLOWED, 'Error fetching data.', error);
+      res.render('instagramAuthResult', {
+        accessToken: null,
+        userInfo: null,
+        businessInfo: { media: [] },
+        error: 'Error fetching data. Please try again.'
+      });
     }
   } else {
-    throw new apiError(STATUS_CODES.UNAUTHORIZED, 'Authentication failed');
+    res.render('instagramAuthResult', {
+      accessToken: null,
+      userInfo: null,
+      businessInfo: { media: [] },
+      error: 'Authentication failed. No code provided.'
+    });
   }
 };
+
 
 export const getAuthInstaCode = asyncHandler(async (req, res) => {
   try {
