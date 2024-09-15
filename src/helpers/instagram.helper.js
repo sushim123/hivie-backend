@@ -31,7 +31,6 @@ export const getBusinessDiscovery = async (username) => {
         access_token: accessToken
       }
     });
-
     // Corrected logging statement
     return response.data.business_discovery;
   } catch (error) {

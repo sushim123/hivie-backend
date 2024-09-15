@@ -46,8 +46,15 @@ export const fetchProfileOfInfluencer = async (req, res, next) => {
       await dbUser.save();
     }
 
-    res.send(new apiResponse(STATUS_CODES.OK, user, 'Dashboard fetched successfully', true));
-  } catch (error) {
+  //   res.send(new apiResponse(STATUS_CODES.OK, user, 'Dashboard fetched successfully', true));
+  // }
+
+  //res.send ko change karke res.render kar diya (influencerProfile) aur json me pass na karte simple html me pass kiya from schema
+    res.render('influencerProfile', {
+      user: dbUser,  // Pass the user data to the template
+      message: 'Dashboard fetched successfully',
+    });}
+     catch (error) {
     next(new apiResponse(STATUS_CODES.BAD_REQUEST, 'Failed to fetch profile', error));
   }
 };

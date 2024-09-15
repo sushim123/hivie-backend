@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Instagram Authorization Result</title>
+</head>
+<body>
+  <h1>Instagram Authorization Result</h1>
+  <% if (error) { %>
+    <div class="error">
+      <h2>Error</h2>
+      <p><%= error %></p>
+    </div>
+  <% } else { %>
+    <div class="result">
+      <h2>Success!</h2>
+      <h3>User Information</h3>
+      <p><strong>username:</strong> <%= userInfo.username %></p>
+      <p><strong>name:</strong> <%= businessInfo.name %></p>
+      <p><strong>profile_picture_url:</strong> <%= businessInfo.profile_picture_url %> </p>
+      <p><strong>followers_count:</strong> <%= businessInfo.followers_count %></p>
+      <p><strong>media_count:</strong> <%= businessInfo.media_count %></p>
+      <p><strong>follows_count:</strong> <%= businessInfo.follows_count %></p>
+      <h3>Media Information</h3>
+      <% if (Array.isArray(businessInfo.media) && businessInfo.media.length > 0) { %>
+        <ul>
+          <% businessInfo.media.forEach(media => { %>
+            <li>
+              <p><strong>caption:</strong> <%= media.caption %></p>
+              <p><strong>media_type:</strong> <%= media.media_type %></p>
+              <p><strong>media_url:</strong> <%= media.media_url %></p>
+              <p><strong>permalink:</strong> %= media.permalink %></p>
+              <p><strong>Timestamp:</strong> <%= new Date(media.timestamp).toLocaleString() %></p>
+              <p><strong>like_count:</strong> <%= media.like_count %></p>
+              <p><strong>comments_count:</strong> <%= media.comments_count %></p>
+            </li>
+          <% }) %>
+        </ul>
+      <% } else { %>
+        <p>No media information available.</p>
+      <% } %>
+    </div>
+  <% } %>
+
+  <a href="/">Go back to the homepage</a>
+</body>
+</html>

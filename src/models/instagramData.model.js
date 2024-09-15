@@ -36,7 +36,7 @@ const BusinessInfoSchema = new mongoose.Schema(
     follows_count: {type: Number, required: true},
     media_count: {type: Number, required: true},
     media: {type: [MediaSchema], required: true},
-    metrics: {type: MetricsSchema, required: true} // Changed from array to single object
+    metrics: {type: [MetricsSchema], required: true} // Changed from array to single object
   },
   {_id: false} // Prevents auto-creation of an _id for subdocuments
 );
