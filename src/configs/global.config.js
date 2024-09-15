@@ -1,5 +1,4 @@
 
-
 export const OAUTH_CONFIG = {
   authRequired: false,
   auth0Logout: true,
