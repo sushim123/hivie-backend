@@ -1,4 +1,4 @@
-import { INSTA_REDIRECT_URL } from '../constants.js';
+
 
 export const OAUTH_CONFIG = {
   authRequired: false,

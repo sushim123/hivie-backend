@@ -33,7 +33,7 @@ const industrySchema = new mongoose.Schema({
       'Consumer Goods', 'Technology', 'Automotive', 'Healthcare', 'Finance', 'Retail',
       'Food & Beverage', 'Media & Entertainment', 'Energy & Utilities', 'Transportation & Logistics',
       'Hospitality & Tourism', 'Real Estate', 'Telecommunications', 'Education & E-Learning', 'Aerospace & Defense'
-    ],
+    ], 
   },
   industrySubtype: {
     type: String,
