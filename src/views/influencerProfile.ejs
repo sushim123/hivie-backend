@@ -19,10 +19,7 @@
         <button type="submit">Authorize Instagram</button>
       </form>
     <% } else { %>
-      <p>Your account is not temporary.</p>
-      <form action="/api/v1/insta/auth" method="GET">
-        <button type="submit">Authorize Instagram</button>
-      </form>
+      <p>Your account is not temporary!</p>
     <% } %>
   </div>
   <h3><%= message %></h3>
