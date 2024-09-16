@@ -6,7 +6,6 @@ import {
   deleteUser,
   fetchAllUser,
   fetchById,
-  fetchById,
   updateUser
 } from '../controllers/user.controller.js';
 import {isAdmin, isAuthenticated, isInfluencer} from '../middlewares/auth.middleware.js';

@@ -54,10 +54,8 @@ export const calculateDigitalScore = async (req, res, next) => {
     if (!user?.instaData?.data) {
       return res.status(404).json({ message: 'User or Instagram data not found' });
     }
-
     const { followers_count, follows_count } = user.instaData.data;
-    const { totalComments = 0, totalLikes = 0, totalShares = 0, totalCountOfMediaInSevenDays = 0 } = user.instaData.data.metrics || {};
-
+    const { totalComments = 0, totalLikes = 0, totalShares = 0, totalCountOfMediaInSevenDays = 0 } = user.instaData.data.metrics[0]||{};
     if (followers_count <= 0) {
       return res.status(400).json({ message: 'Invalid follower count' });
     }
