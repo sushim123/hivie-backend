@@ -61,7 +61,7 @@ export const calculateDigitalScore = async (req, res, next) => {
     if (followers_count <= 0) {
       return res.status(400).json({ message: 'Invalid follower count' });
     }
-    const engagementRate = ((totalComments + totalLikes + totalShares) / followers_count) * 100;
+    const engagementRate = ((totalComments + totalLikes + totalShares) / followers_count) ;
     const followerToFollowingRatio = follows_count > 0 ? followers_count / follows_count : 0;
     const contentConsistency = totalCountOfMediaInSevenDays;
     const contentQuality = totalCountOfMediaInSevenDays > 0 ? totalLikes / totalCountOfMediaInSevenDays : 0;

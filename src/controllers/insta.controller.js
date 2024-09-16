@@ -46,9 +46,8 @@ export const getAuthInstaCode = asyncHandler(async (req, res) => {
     throw new apiError(STATUS_CODES.BAD_REQUEST, 'Code not found', error);
   }
 });
-export const fetchDataByUsername = async (req, res, next) => {
+export const fetchAndLinkData = async (req, res, next) => {
   const {username} = req.params;
-
   if (!username) {
     return res
       .status(STATUS_CODES.BAD_GATEWAY)
