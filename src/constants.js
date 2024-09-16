@@ -1,7 +1,7 @@
 export const API_INSTA_GRAPH = 'https://graph.facebook.com/v20.0/17841468546353221';
 export const OPTIONS_INSTA =
   '{id,username,name,profile_picture_url,followers_count,follows_count,media_count,media{id,caption,media_type,media_url,thumbnail_url,permalink,timestamp,like_count,comments_count}}';
-export const INSTA_REDIRECT_URL = `https://localhost:4000/api/v1/insta/auth/callback`;
+export const INSTA_REDIRECT_URL = process.env.INSTA_REDIRECT_URL;
 export const INSTA_URL = `https://api.instagram.com/oauth`;
 export const INSTA_GRAPH_URL = 'https://graph.instagram.com/me';
 export const STATUS_CODES = {
@@ -55,7 +55,24 @@ export const STATUS_CODES = {
   NOT_EXTENDED: 510, // Further extensions to the request are required for the server to fulfill it.
   NETWORK_AUTHENTICATION_REQUIRED: 511 // The client needs to authenticate to gain network access.
 };
-
+export const VALID_INDUSTRY_TYPES_AND_SUBTYPES =
+{
+  'Consumer Goods': ['FMCG', 'Consumer Electronics', 'Fashion & Apparel', 'Beauty & Personal Care'],
+  Technology: ['Software & Services', 'Hardware', 'Telecommunication'],
+  Automotive: ['Car Manufacturers', 'Motorcycles', 'Auto Parts & Accessories'],
+  Healthcare: ['Pharmaceuticals', 'Medical Devices', 'Health Insurance'],
+  Finance: ['Banks', 'Financial Services', 'Insurance'],
+  Retail: ['Brick-and-Mortar Retail', 'E-Commerce'],
+  'Food & Beverage': ['Restaurants', 'Alcoholic Beverages', 'Non-Alcoholic Beverages'],
+  'Media & Entertainment': ['Streaming Services', 'Traditional Media', 'Gaming'],
+  'Energy & Utilities': ['Oil & Gas', 'Renewable Energy', 'Utilities'],
+  'Transportation & Logistics': ['Airlines', 'Shipping & Logistics'],
+  'Hospitality & Tourism': ['Hotels & Resorts', 'Travel Agencies'],
+  'Real Estate': ['Residential & Commercial Real Estate'],
+  Telecommunications: ['Telecom Providers'],
+  'Education & E-Learning': ['Online Learning Platforms', 'Traditional Educational Institutions'],
+  'Aerospace & Defense': ['Aerospace', 'Defense']
+}
 export const DUPLICATE_ERROR_CODE = 11000;
 export const START_OF_DAY = 'T00:00:00.000Z';
 export const END_OF_DAY = 'T23:59:59.999Z';

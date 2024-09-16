@@ -13,6 +13,7 @@ import {User} from '../models/user.model.js';
 import {apiError} from '../utils/apiError.util.js';
 import {apiResponse} from '../utils/apiResponse.util.js';
 import {asyncHandler} from '../utils/asyncHandler.util.js';
+import { User } from '../models/user.model.js';
 dotenv.config({path: './.env'});
 export const fetchDataByInstaAuth = async (req, res) => {
   const authCode = req.query.code;
@@ -25,18 +26,39 @@ export const fetchDataByInstaAuth = async (req, res) => {
       const accessToken = tokenResponse.data.access_token;
       const userInfo = await getUserInfo(tokenResponse.data.access_token);
       const businessInfo = await getBusinessDiscovery(userInfo.username);
-      res
-        .status(STATUS_CODES.OK)
-        .json(
-          new apiResponse(STATUS_CODES.OK, {accessToken, userInfo, businessInfo}, 'All date fetched successfully.')
-        );
+
+      // Flatten the media data
+      const mediaArray = businessInfo.media?.data || [];
+
+      const { email } = req.oidc.user;
+      if (!email) {
+        throw new apiError(STATUS_CODES.UNAUTHORIZED, 'Email not found in user info');
+      }
+      await User.findOneAndUpdate({ email }, { isTemporary: false , expiresAt: null });
+      res.render('instagramAuthResult', {
+        accessToken,
+        userInfo,
+        businessInfo: { ...businessInfo, media: mediaArray },
+        error: null
+      });
     } catch (error) {
-      throw new apiError(STATUS_CODES.METHOD_NOT_ALLOWED, 'Error fetching data.', error);
+      res.render('instagramAuthResult', {
+        accessToken: null,
+        userInfo: null,
+        businessInfo: { media: [] },
+        error: 'Error fetching data. Please try again.'
+      });
     }
   } else {
-    throw new apiError(STATUS_CODES.UNAUTHORIZED, 'Authentication failed');
+    res.render('instagramAuthResult', {
+      accessToken: null,
+      userInfo: null,
+      businessInfo: { media: [] },
+      error: 'Authentication failed. No code provided.'
+    });
   }
 };
+
 
 export const getAuthInstaCode = asyncHandler(async (req, res) => {
   try {
@@ -65,7 +87,6 @@ export const fetchAndLinkData = async (req, res, next) => {
     const existingData = await InstagramData.findOne({'data.username': username});
 
     if (existingData) {
-      // Update existing data with the new fetched data
       existingData.data = instagramDataObject.data; // Replace with new data
       await existingData.save();
       try {

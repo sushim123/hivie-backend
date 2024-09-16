@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Brand & Influencer Login</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+    }
+    button {
+      margin: 5px;
+      padding: 10px 20px;
+      font-size: 16px;
+    }
+    #main-section, #influencer-section, #brand-section {
+      margin-top: 20px;
+    }
+  </style>
+  <script>
+    // Function to show the influencer login options
+    function showInfluencerLogin() {
+      document.getElementById('influencer-section').style.display = 'block';
+      document.getElementById('brand-section').style.display = 'none';
+      document.getElementById('main-section').style.display = 'none';
+    }
+
+    // Function to show the brand login options
+    function showBrandLogin() {
+      document.getElementById('brand-section').style.display = 'block';
+      document.getElementById('influencer-section').style.display = 'none';
+      document.getElementById('main-section').style.display = 'none';
+    }
+
+    // Influencer login/logout/profile routes
+    function influencerLogin() {
+      location.href = '/login'; // Adjust if needed
+    }
+
+    function influencerProfile() {
+      location.href = '/profile'; // Adjust if needed
+    }
+
+    function influencerLogout() {
+      location.href = '/logout'; // Adjust if needed
+    }
+
+    // Brand login/logout/profile routes
+    function brandLogin() {
+      location.href = '/api/v1/brand/login'; // Adjust if needed
+    }
+
+    function brandProfile() {
+      location.href = '/api/v1/brand/profile'; // Adjust if needed
+    }
+
+    function brandLogout() {
+      location.href = '/api/v1/brand/logout'; // Adjust if needed
+    }
+
+  </script>
+</head>
+<body>
+  <h3>Select Login Type</h3>
+  <div id="main-section">
+    <button onclick="showInfluencerLogin()">Influencer Login</button>
+    <button onclick="showBrandLogin()">Brand Login</button>
+  </div>
+
+  <div id="influencer-section" style="display: none;">
+    <h3>Influencer Actions</h3>
+    <button onclick="influencerLogin()">Login</button>
+    <button onclick="influencerProfile()">Fetch Profile</button>
+    <button onclick="influencerLogout()">Logout</button>
+
+  </div>
+
+  <div id="brand-section" style="display: none;">
+    <h3>Brand Actions</h3>
+    <button onclick="brandLogin()">Login</button>
+    <button onclick="brandProfile()">Fetch Profile</button>
+    <button onclick="brandLogout()">Logout</button>
+  </div>
+</body>
+</html>

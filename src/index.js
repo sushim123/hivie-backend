@@ -32,6 +32,7 @@ const __dirname = dirname(__filename);
 app.set('views', join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 
+
 // Import and use routes
 import brandAuthRoutes from './routes/brandAuth.route.js';
 import dropRoutes from './routes/drop.route.js';
@@ -40,6 +41,7 @@ import eCommerceRoutes from './routes/eCommerce.route.js';
 import influencerRoute from './routes/influencer.route.js';
 import instaRoutes from './routes/insta.routes.js';
 import usersRoutes from './routes/user.route.js';
+// import { pricingRoutes } from './routes/price.route.js';
 
 app.use('/', influencerRoute);
 app.use('/api/v1/user', usersRoutes);
@@ -48,6 +50,7 @@ app.use('/api/v1/insta', instaRoutes);
 app.use('/api/v1/drops', dropRoutes);
 app.use('/api/v1/drop-link', dropLinkRoutes);
 app.use('/api/v1/e-commerce', eCommerceRoutes);
+// app.use('/api/v1/user/pricing' ,pricingRoutes);
 
 // Error handling middleware
 app.use(notFoundError);
