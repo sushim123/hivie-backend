@@ -5,19 +5,19 @@ import { asyncHandler } from '../utils/asyncHandler.util.js';
 const { requiresAuth } = pkg;
 import {
   fetchAuthenticationInfluencer,
-  fetchInfluenderAuthenticationAccessToken,
+  fetchInfluencerAuthenticationAccessToken,
   fetchProfileOfInfluencer,
-  logoutInfluender,
+  logoutInfluencer,
 } from '../controllers/influencer.controller.js';
 const route = Router();
 // Route to check if the user is authenticated
 route.get('/', asyncHandler(fetchAuthenticationInfluencer));
 // Route to fetch an OAuth access token
-route.get('/oauth/token', isAuthenticated, asyncHandler(fetchInfluenderAuthenticationAccessToken));
+route.get('/oauth/token', isAuthenticated, asyncHandler(fetchInfluencerAuthenticationAccessToken));
 // Route to log in
 route.get('/login', isAuthenticated, (req, res) => {res.oidc.login({ returnTo: '/' });});
 // Route to display the user's profile information
 route.get('/profile', isAuthenticated, asyncHandler(fetchProfileOfInfluencer) );
 // Route to log out the user, requires the user to be authenticated
-route.get('/logout', requiresAuth, asyncHandler(logoutInfluender ));
+route.get('/logout', requiresAuth, asyncHandler(logoutInfluencer ));
 export default route;

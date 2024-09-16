@@ -19,7 +19,7 @@ export const fetchAuthenticationInfluencer = async (req, res, next) => {
 };
 
 // OAuth access token
-export const fetchInfluenderAuthenticationAccessToken = async (req, res, next) => {
+export const fetchInfluencerAuthenticationAccessToken = async (req, res, next) => {
   try {
     const accessToken = await getAuthToken();
     res.send(new apiResponse(STATUS_CODES.OK, accessToken, 'Token fetched successfully', true));
@@ -59,7 +59,7 @@ export const fetchProfileOfInfluencer = async (req, res, next) => {
   }
 };
 
-export const logoutInfluender = async (req, res, next) => {
+export const logoutInfluencer = async (req, res, next) => {
   try {
     const user = req.oidc.user;
     if (user) {
