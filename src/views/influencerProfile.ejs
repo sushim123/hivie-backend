@@ -8,20 +8,9 @@
 <body>
   <h1>Influencer Profile</h1>
   <div class="profile-container">
-    <p>Name: <%= user.name %></p>
-    <p>Email: <%= user.email %></p>
-    <p>Role: <%= user.role %></p>
-    <p>Profile Photo: <%= user.picture %></p>
-    <p>Email Verified?: <%= user.email_verified %></p>
-    <% if (user.isTemporary) { %>
-      <p>Your account is temporary. Click below to authorize Instagram and change your temporary state.</p>
       <form action="/api/v1/insta/auth" method="GET">
         <button type="submit">Authorize Instagram</button>
       </form>
-    <% } else { %>
-      <p>Your account is not temporary!</p>
-    <% } %>
-    
   </div>
   <h3><%= message %></h3>
 </body>

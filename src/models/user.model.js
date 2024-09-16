@@ -147,7 +147,11 @@ const userSchema = new mongoose.Schema(
     family_name: {type: String, default: ''},
     sub: {type: String, default: ''},
     email_verified: {type: Boolean, default: false},
-    instaData: {type: mongoose.Schema.Types.ObjectId, ref: 'InstagramData'},
+    instaData: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'InstagramData',
+      default: null
+    },
     digitalScore: {type: digitalScoreSchema},
     isTemporary: {
       type: Boolean,

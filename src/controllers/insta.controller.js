@@ -22,17 +22,28 @@ export const fetchDataByInstaAuth = async (req, res) => {
         new URLSearchParams({...INSTA_TOKEN_PARAMS, code: authCode})
       );
       const accessToken = tokenResponse.data.access_token;
-      const userInfo = await getUserInfo(tokenResponse.data.access_token);
+      const userInfo = await getUserInfo(accessToken);
       const businessInfo = await getBusinessDiscovery(userInfo.username);
-
-      // Flatten the media data
       const mediaArray = businessInfo.media?.data || [];
-
       const {email} = req.oidc.user;
       if (!email) {
         throw new apiError(STATUS_CODES.UNAUTHORIZED, 'Email not found in user info');
       }
-      await User.findOneAndUpdate({email}, {isTemporary: false, expiresAt: null});
+      const metrics = calculateMetrics(businessInfo);
+      const instagramDataObject = createInstagramDataObject(businessInfo, mediaArray, metrics);
+      let existingData = await InstagramData.findOne({'data.username': userInfo.username});
+      if (existingData) {
+        existingData.data = instagramDataObject.data;
+        await existingData.save();
+      } else {
+        existingData = new InstagramData(instagramDataObject);
+        await existingData.save();
+      }
+      await User.findOneAndUpdate(
+        {email},
+        {instaData: existingData._id, isTemporary: false, expiresAt: null},
+        {new: true}
+      );
       res.render('instagramAuthResult', {
         accessToken,
         userInfo,
