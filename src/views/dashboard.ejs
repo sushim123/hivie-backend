@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Dashboard</title>
+</head>
+<body>
+    <h2>User Dashboard</h2>
+
+    <div>
+        <strong>Nickname:</strong> <%= user.nickname %><br>
+        <strong>Name:</strong> <%= user.name || 'N/A' %><br>
+        <strong>Email:</strong> <%= user.email %><br>
+        <strong>Role:</strong> <%= user.role %><br>
+        <strong>Picture:</strong> <img src="<%= user.picture %>" alt="Profile Picture" style="max-width: 100px;"><br>
+        <strong>Instagram Data:</strong> <%= user.instaData ? JSON.stringify(user.instaData) : 'N/A' %><br>
+        <strong>Platform Links:</strong>
+        <ul>
+            <% if (user.platformLinks && user.platformLinks.length > 0) { %>
+                <% user.platformLinks.forEach(link => { %>
+                    <li>
+                        <strong>Email:</strong> <%= link.email %><br>
+                        <strong>YouTube:</strong> <%= link.youtube || 'N/A' %><br>
+                        <strong>TikTok:</strong> <%= link.tiktok || 'N/A' %><br>
+                        <strong>LinkedIn:</strong> <%= link.linkedin || 'N/A' %><br>
+                        <strong>Discord:</strong> <%= link.discord || 'N/A' %>
+                    </li>
+                <% }); %>
+            <% } else { %>
+                <li>No platform links available.</li>
+            <% } %>
+        </ul>
+        <strong>Pricing Information:</strong>
+        <ul>
+            <% if (user.pricing && user.pricing.length > 0) { %>
+                <% user.pricing.forEach(pricing => { %>
+                    <li>
+                        <strong>Post Price:</strong> <%= pricing.postPrice %><br>
+                        <strong>Reel Price:</strong> <%= pricing.reelPrice %><br>
+                        <strong>Brand Range:</strong> <%= pricing.brandRange %>
+                    </li>
+                <% }); %>
+            <% } else { %>
+                <li>No pricing information available.</li>
+            <% } %>
+        </ul>
+    </div>
+</body>
+</html>

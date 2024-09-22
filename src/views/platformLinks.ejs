@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Update Platform Links</title>
+</head>
+<body>
+    <h2>Update Your Platform Links</h2>
+
+    <% if (errorMessage) { %>
+        <div>
+            <%= errorMessage %>
+        </div>
+    <% } %>
+
+    <% if (successMessage) { %>
+        <div>
+            <%= successMessage %>
+        </div>
+    <% } %>
+
+    <form action="/api/v1/user/highlights" method="POST">
+        <div>
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email" placeholder="Enter your email" required>
+        </div>
+
+        <div>
+            <label for="youtube">YouTube</label>
+            <input type="url" id="youtube" name="youtube" placeholder="YouTube URL">
+        </div>
+
+        <div>
+            <label for="tiktok">TikTok</label>
+            <input type="url" id="tiktok" name="tiktok" placeholder="TikTok URL">
+        </div>
+
+        <div>
+            <label for="linkedin">LinkedIn</label>
+            <input type="url" id="linkedin" name="linkedin" placeholder="LinkedIn URL">
+        </div>
+
+        <div>
+            <label for="discord">Discord</label>
+            <input type="url" id="discord" name="discord" placeholder="Discord URL">
+        </div>
+
+        <button type="submit">Submit</button>
+    </form>
+
+    <% if (platformLinks.length > 0) { %>
+        <h3>Existing Platform Links</h3>
+        <ul>
+            <% platformLinks.forEach(link => { %>
+                <li>
+                    <strong>Email:</strong> <%= link.email %><br>
+                    <strong>YouTube:</strong> <%= link.youtube || 'N/A' %><br>
+                    <strong>TikTok:</strong> <%= link.tiktok || 'N/A' %><br>
+                    <strong>LinkedIn:</strong> <%= link.linkedin || 'N/A' %><br>
+                    <strong>Discord:</strong> <%= link.discord || 'N/A' %>
+                </li>
+            <% }); %>
+        </ul>
+    <% } %>
+</body>
+</html>

@@ -69,7 +69,6 @@ export const calculateDigitalScore = async (req, res, next) => {
       followerToFollowingRatio * SCORE_WEIGHT.FOLLOWER_FOLLOWING_RATIO +
       contentConsistency * SCORE_WEIGHT.CONTENT_CONSISTENCY +
       contentQuality * SCORE_WEIGHT.CONTENT_QUALITY;
-
     res.json({follows_count, followers_count, engagementRate, followerToFollowingRatio, contentConsistency, contentQuality, rawScore});
   } catch (error) {
     next(error);

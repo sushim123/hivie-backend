@@ -13,12 +13,12 @@ export const createPlatformLinks = async (req, res) => {
     const existingLinks = user.platformLinks.find(links => links.email === email);
     if (existingLinks) {
       Object.assign(existingLinks, { youtube, tiktok, linkedin, discord });
-    } 
+    }
     else {
       user.platformLinks.push({ email, youtube, tiktok, linkedin, discord });
     }
     await user.save();
-    res.status(STATUS_CODES.OK).json(user.platformLinks);
+    res.redirect('/api/v1/user/dashboard');
   } catch (error) {
     res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({ message: 'Server error', error });
   }
@@ -38,3 +38,22 @@ export const fetchPlatformLinks = async (req, res) => {
     res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({ message: 'Server error', error });
   }
 };
+
+export const dashboard = async (req, res) => {
+  try {
+      const userId = req.user.id;
+      const user = await User.findById(userId)
+          .populate('instaData platformLinks')
+          .exec();
+
+      if (!user) {
+          return res.status(404).send('User not found');
+      }
+
+      res.render('dashboard', { user });
+  } catch (error) {
+      console.error(error);
+      res.status(500).send('Server Error');
+  }
+};
+

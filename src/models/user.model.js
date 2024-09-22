@@ -35,12 +35,13 @@ const platformLinksSchema = new mongoose.Schema(
 // Pricing Schema
 const pricingSchema = new mongoose.Schema(
   {
-    postPrice: {type: Number, required: true, min: 0},
-    reelPrice: {type: Number, required: true, min: 0},
-    brandRange: {type: Number, required: true, enum: Array.from({length: 10}, (_, i) => i + 1)}
+    postPrice: { type: Number, required: true, min: 0 },
+    reelPrice: { type: Number, required: true, min: 0 },
+    brandRange: { type: Number, required: true, enum: Array.from({ length: 10 }, (_, i) => i + 1) }
   },
-  {_id: false}
+  { _id: false }
 );
+
 
 // Industry Schema
 const industrySchema = new mongoose.Schema(
