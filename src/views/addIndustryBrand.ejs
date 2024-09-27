@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Add Industry Type and Subtype</title>
+  <link rel="stylesheet" href="/path/to/your/styles.css"> <!-- Include your CSS file if needed -->
+</head>
+<body>
+  <div class="container">
+    <h1>Add Industry Type and Subtype</h1>
+
+    <!-- Displaying error and success messages -->
+    <% if (errorMessage) { %>
+      <div class="error-message">
+        <p><%= errorMessage %></p>
+      </div>
+    <% } %>
+
+    <% if (successMessage) { %>
+      <div class="success-message">
+        <p><%= successMessage %></p>
+      </div>
+    <% } %>
+
+
+    <form action="/api/v1/brand/industry" method="POST">
+      <div class="form-group">
+        <label for="userId">User ID:</label>
+        <input type="text" id="userId" name="userId" required />
+      </div>
+
+      <div class="form-group">
+        <label for="industryType">Industry Type:</label>
+        <select id="industryType" name="industryType" required>
+          <option value="">Select Industry Type</option>
+          <% industryData.forEach(industry => { %>
+            <option value="<%= industry.industryType %>"><%= industry.industryType %></option>
+          <% }); %>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="industrySubtype">Industry Subtype:</label>
+        <select id="industrySubtype" name="industrySubtype" required>
+          <option value="">Select Industry Subtype</option>
+          <% industryData.forEach(industry => { %>
+            <% industry.industrySubtypes.forEach(subtype => { %>
+              <option value="<%= subtype %>" data-type="<%= industry.industryType %>"><%= subtype %></option>
+            <% }); %>
+          <% }); %>
+        </select>
+      </div>
+
+      <button type="submit">Submit</button>
+    </form>
+  </div>
+
+  <script>
+    const industryTypeSelect = document.getElementById('industryType');
+    const industrySubtypeSelect = document.getElementById('industrySubtype');
+
+    industryTypeSelect.addEventListener('change', () => {
+      const selectedType = industryTypeSelect.value;
+      Array.from(industrySubtypeSelect.options).forEach(option => {
+        option.style.display = option.getAttribute('data-type') === selectedType ? 'block' : 'none';
+      });
+      industrySubtypeSelect.value = '';
+    });
+  </script>
+</body>
+</html>

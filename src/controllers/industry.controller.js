@@ -51,31 +51,100 @@ const handleUpdate = async (res, userId, field, value, validRangeType) => {
 };
 
 export const fetchIndustryTypesAndSubtypes = async (req, res) => {
-  handleFetch(res, 'industry.industryType industry.industrySubtype', 'industry');
+  try {
+    // Fetching industry data from the `VALID_INDUSTRY_TYPES_AND_SUBTYPES`
+    const industryData = Object.entries(validIndustryTypesAndSubtypes).map(([type, subtypes]) => ({
+      industryType: type,
+      industrySubtypes: subtypes,
+    }));
+
+    // Render the form with the fetched industry data
+    res.render('addIndustryBrand', {
+      errorMessage: null,
+      successMessage: null,
+      industryData // Pass the industry data to the view
+    });
+  } catch (error) {
+    res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json(
+      new apiError(
+        STATUS_CODES.INTERNAL_SERVER_ERROR,
+        null,
+        `Failed to fetch industry types and subtypes: ${error.message}`,
+        false
+      )
+    );
+  }
 };
+
 
 export const addIndustryTypeAndSubtype = async (req, res) => {
   const { userId, industryType, industrySubtype } = req.body;
-
-  if (!userId) return handleValidationError(res, 'User ID is required');
-  if (!isValidIndustry(industryType, industrySubtype)) return handleValidationError(res, 'Invalid industry type or subtype');
+  if (!userId) {
+    return res.render('addIndustryBrand', {
+      errorMessage: 'User ID is required',
+      successMessage: null,
+      industryData: Object.entries(validIndustryTypesAndSubtypes).map(([type, subtypes]) => ({
+        industryType: type,
+        industrySubtypes: subtypes,
+      }))
+    });
+  }
+  if (!isValidIndustry(industryType, industrySubtype)) {
+    return res.render('addIndustryBrand', {
+      errorMessage: 'Invalid industry type or subtype',
+      successMessage: null,
+      industryData: Object.entries(validIndustryTypesAndSubtypes).map(([type, subtypes]) => ({
+        industryType: type,
+        industrySubtypes: subtypes,
+      }))
+    });
+  }
 
   try {
     const user = await User.findById(userId);
-    if (!user) return res.status(STATUS_CODES.NOT_FOUND).json(new apiResponse(STATUS_CODES.NOT_FOUND, null, 'User not found', false));
+    if (!user) {
+      return res.render('addIndustryBrand', {
+        errorMessage: 'User not found',
+        successMessage: null,
+        industryData: Object.entries(validIndustryTypesAndSubtypes).map(([type, subtypes]) => ({
+          industryType: type,
+          industrySubtypes: subtypes,
+        }))
+      });
+    }
 
     if (user.industry && user.industry.industryType === industryType && user.industry.industrySubtype === industrySubtype) {
-      return handleValidationError(res, 'Industry type and subtype already exist for this user');
+      return res.render('addIndustryBrand', {
+        errorMessage: 'Industry type and subtype already exist for this user',
+        successMessage: null,
+        industryData: Object.entries(validIndustryTypesAndSubtypes).map(([type, subtypes]) => ({
+          industryType: type,
+          industrySubtypes: subtypes,
+        }))
+      });
     }
 
     user.industry = { industryType, industrySubtype };
     await user.save();
-    res.status(STATUS_CODES.CREATED).json(new apiResponse(STATUS_CODES.CREATED, user, 'Industry type and subtype added successfully', true));
+    return res.render('addIndustryBrand', {
+      errorMessage: null,
+      successMessage: 'Industry type and subtype added successfully',
+      industryData: Object.entries(validIndustryTypesAndSubtypes).map(([type, subtypes]) => ({
+        industryType: type,
+        industrySubtypes: subtypes,
+      }))
+    });
   } catch (error) {
-    res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json(new apiError(STATUS_CODES.INTERNAL_SERVER_ERROR, null, `Failed to add industry type and subtype: ${error.message}`, false));
+    return res.render('addIndustryBrand', {
+      errorMessage: `Failed to add industry type and subtype: ${error.message}`,
+      successMessage: null,
+      industryData: Object.entries(validIndustryTypesAndSubtypes).map(([type, subtypes]) => ({
+        industryType: type,
+        industrySubtypes: subtypes,
+      }))
+    });
   }
 };
-
 export const addOrUpdateNumberOfProducts = async (req, res) => {
   const { userId, numberOfProducts } = req.body;
   handleUpdate(res, userId, 'numberOfProducts', numberOfProducts, 'numberOfProducts');
@@ -109,7 +178,6 @@ export const createOrUpdateBrandInfo = async (req, res) => {
 
     if (user.role !== 'brand') return handleValidationError(res, 'Only brands can have brand info');
 
-    // Ensure that the brandInfo object matches the schema
     user.brandInfo = {
       socialMediaPlatformLinks: brandInfo.platformLinks,
       reasonForOnboarding: brandInfo.reasonForOnboarding
@@ -126,7 +194,7 @@ export const createOrUpdateBrandInfo = async (req, res) => {
 
 export const fetchBrandInfo = async (req, res) => {
   try {
-    const users = await User.find({ role: 'brand' }).select('brandInfo').lean(); 
+    const users = await User.find({ role: 'brand' }).select('brandInfo').lean();
 
     const brandInfoData = users.map((user) => user.brandInfo);
 
@@ -136,7 +204,12 @@ export const fetchBrandInfo = async (req, res) => {
   }
 };
 
-
+export const renderIndustryForm = (req, res) => {
+  res.render('addIndustryBrand', {
+    errorMessage: null,
+    successMessage: null
+  });
+};
 
 
 
