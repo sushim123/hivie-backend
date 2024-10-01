@@ -44,7 +44,7 @@ route.post('/industry',addIndustryTypeAndSubtype);
 
 // Number of products routes
 route.get('/number-of-products', fetchNumberOfProducts);
-route.post('/number-of-products', addOrUpdateNumberOfProducts);
+route.post('/number-of-products', addOrUpdateNumberOfProducts );
 // Size of company routes
 route.get('/size-of-company', fetchSizeOfCompany);
 route.post('/size-of-company', addOrUpdateSizeOfCompany);

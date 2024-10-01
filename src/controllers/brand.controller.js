@@ -13,14 +13,13 @@ export const fetchAuthenticationBrand = async (req, res) => {
 
 export const loginBrand = async (req, res) => {
   res.oidc.login({
-    returnTo: '/' // Optionally specify where to redirect after login
+    returnTo: '/api/v1/brand/industry'
   });
 };
 
 export const fetchProfileOfBrand = async (req, res, next) => {
   try {
     const user = req.user;
-
     if (!user) {
       throw new apiError(STATUS_CODES.NOT_FOUND, 'User not found', []);
     }

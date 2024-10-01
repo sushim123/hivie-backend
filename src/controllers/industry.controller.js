@@ -44,11 +44,12 @@ const handleUpdate = async (res, userId, field, value, validRangeType) => {
       await user.save();
     }
 
-    res.status(STATUS_CODES.OK).json(new apiResponse(STATUS_CODES.OK, user, `${validRangeType.replace(/([A-Z])/g, ' $1')} added/updated successfully`, true));
+    return { success: true, message: `${validRangeType.replace(/([A-Z])/g, ' $1')} added/updated successfully` };
   } catch (error) {
-    res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json(new apiError(STATUS_CODES.INTERNAL_SERVER_ERROR, null, `Failed to add/update ${validRangeType.replace(/([A-Z])/g, ' $1')}: ${error.message}`, false));
+    return { success: false, errorMessage: `Failed to add/update ${validRangeType.replace(/([A-Z])/g, ' $1')}: ${error.message}` };
   }
 };
+
 
 export const fetchIndustryTypesAndSubtypes = async (req, res) => {
   try {
@@ -78,89 +79,118 @@ export const fetchIndustryTypesAndSubtypes = async (req, res) => {
 
 
 export const addIndustryTypeAndSubtype = async (req, res) => {
-  const { userId, industryType, industrySubtype } = req.body;
-  if (!userId) {
+  const { email, industryType, industrySubtype } = req.body;
+
+  // Helper function to render the form with dynamic industry data
+  const renderForm = (errorMessage = null, successMessage = null) => {
     return res.render('addIndustryBrand', {
-      errorMessage: 'User ID is required',
-      successMessage: null,
+      errorMessage,
+      successMessage,
       industryData: Object.entries(validIndustryTypesAndSubtypes).map(([type, subtypes]) => ({
         industryType: type,
         industrySubtypes: subtypes,
       }))
     });
+  };
+
+  if (!email) {
+    return renderForm('Email is required');
   }
+
   if (!isValidIndustry(industryType, industrySubtype)) {
-    return res.render('addIndustryBrand', {
-      errorMessage: 'Invalid industry type or subtype',
-      successMessage: null,
-      industryData: Object.entries(validIndustryTypesAndSubtypes).map(([type, subtypes]) => ({
-        industryType: type,
-        industrySubtypes: subtypes,
-      }))
-    });
+    return renderForm('Invalid industry type or subtype');
   }
 
   try {
-    const user = await User.findById(userId);
+    const user = await User.findOne({ email });
+
     if (!user) {
-      return res.render('addIndustryBrand', {
-        errorMessage: 'User not found',
-        successMessage: null,
-        industryData: Object.entries(validIndustryTypesAndSubtypes).map(([type, subtypes]) => ({
-          industryType: type,
-          industrySubtypes: subtypes,
-        }))
-      });
+      return renderForm('User not found');
     }
 
     if (user.industry && user.industry.industryType === industryType && user.industry.industrySubtype === industrySubtype) {
-      return res.render('addIndustryBrand', {
-        errorMessage: 'Industry type and subtype already exist for this user',
-        successMessage: null,
-        industryData: Object.entries(validIndustryTypesAndSubtypes).map(([type, subtypes]) => ({
-          industryType: type,
-          industrySubtypes: subtypes,
-        }))
-      });
+      return renderForm('Industry type and subtype already exist for this user');
     }
 
     user.industry = { industryType, industrySubtype };
     await user.save();
-    return res.render('addIndustryBrand', {
-      errorMessage: null,
-      successMessage: 'Industry type and subtype added successfully',
-      industryData: Object.entries(validIndustryTypesAndSubtypes).map(([type, subtypes]) => ({
-        industryType: type,
-        industrySubtypes: subtypes,
-      }))
-    });
+
+    return res.redirect('/api/v1/brand/number-of-products');
+
   } catch (error) {
-    return res.render('addIndustryBrand', {
-      errorMessage: `Failed to add industry type and subtype: ${error.message}`,
+    return renderForm(`Failed to add industry type and subtype: ${error.message}`);
+  }
+};
+
+export const addOrUpdateNumberOfProducts = async (req, res) => {
+  const { userId, numberOfProducts } = req.body;
+
+  try {
+    const updateResult = await handleUpdate(res, userId, 'numberOfProducts', numberOfProducts, 'numberOfProducts');
+
+    if (updateResult.success) {
+      return res.redirect('/api/v1/brand/size-of-company');
+    } else {
+      return res.render('updateNumberOfProducts', {
+        successMessage: null,
+        errorMessage: updateResult.errorMessage
+      });
+    }
+  } catch (error) {
+    console.error("Error updating number of products:", error);
+    return res.render('updateNumberOfProducts', {
       successMessage: null,
-      industryData: Object.entries(validIndustryTypesAndSubtypes).map(([type, subtypes]) => ({
-        industryType: type,
-        industrySubtypes: subtypes,
-      }))
+      errorMessage: "An unexpected error occurred. Please try again."
     });
   }
 };
-export const addOrUpdateNumberOfProducts = async (req, res) => {
-  const { userId, numberOfProducts } = req.body;
-  handleUpdate(res, userId, 'numberOfProducts', numberOfProducts, 'numberOfProducts');
-};
+
 
 export const fetchNumberOfProducts = async (req, res) => {
-  handleFetch(res, 'numberOfProducts', 'numberOfProducts');
+  try {
+    const users = await User.find().select('numberOfProducts').lean();
+    const numberOfProductsData = users.map(user => user.numberOfProducts || 'No data available');
+
+    res.render('numberOfProducts', {
+      numberOfProductsData,
+      errorMessage: null,
+      successMessage: 'Number of Products fetched successfully!'
+    });
+  } catch (error) {
+    res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json(new apiError(STATUS_CODES.INTERNAL_SERVER_ERROR, null, `Failed to fetch number of products: ${error.message}`, false));
+  }
 };
 
 export const addOrUpdateSizeOfCompany = async (req, res) => {
   const { userId, sizeOfCompany } = req.body;
-  handleUpdate(res, userId, 'sizeOfCompany', sizeOfCompany, 'sizeOfCompany');
-};
 
+  try {
+    const updateResult = await handleUpdate(res, userId, 'sizeOfCompany', sizeOfCompany, 'sizeOfCompany');
+
+    if (updateResult.success) {
+      return res.redirect('brand-info');
+    } else {
+      return res.render('updateSizeOfCompany', {
+        successMessage: null,
+        errorMessage: updateResult.errorMessage,
+        sizeOfCompanyOptions: ['under 0.5 cr', '0.5-1 cr', '1-5 cr', '5-10 cr', '10-100 cr', '100+ cr']
+      });
+    }
+  } catch (error) {
+    console.error("Error updating size of company:", error);
+    return res.render('updateSizeOfCompany', {
+      successMessage: null,
+      errorMessage: "An unexpected error occurred. Please try again.",
+      sizeOfCompanyOptions: ['under 0.5 cr', '0.5-1 cr', '1-5 cr', '5-10 cr', '10-100 cr', '100+ cr']
+    });
+  }
+};
 export const fetchSizeOfCompany = async (req, res) => {
-  handleFetch(res, 'sizeOfCompany', 'sizeOfCompany');
+  res.render('updateSizeOfCompany', {
+    sizeOfCompanyOptions: ['under 0.5 cr', '0.5-1 cr', '1-5 cr', '5-10 cr', '10-100 cr', '100+ cr'],
+    successMessage: null,
+    errorMessage: null
+  });
 };
 
 
