@@ -15,58 +15,85 @@ import {asyncHandler} from '../utils/asyncHandler.util.js';
 
 export const fetchDataByInstaAuth = async (req, res) => {
   const authCode = req.query.code;
+
   if (authCode) {
     try {
       const tokenResponse = await axios.post(
         `${INSTA_URL}/access_token`,
-        new URLSearchParams({...INSTA_TOKEN_PARAMS, code: authCode})
+        new URLSearchParams({ ...INSTA_TOKEN_PARAMS, code: authCode })
       );
       const accessToken = tokenResponse.data.access_token;
       const userInfo = await getUserInfo(accessToken);
+      const existingData = await InstagramData.findOne({ 'data.username': userInfo.username });
+
+      if (existingData) {
+        const userRecord = await User.findOne({ instaData: existingData._id });
+        if (userRecord && !userRecord.isTemporary) {
+          return res.render('instagramAuthResult', {
+            accessToken: null,
+            userInfo,
+            businessInfo: null,
+            error: null,
+            alreadyAuthorized: true
+          });
+        }
+      }
+
+      // If not authorized, continue with the authorization process
       const businessInfo = await getBusinessDiscovery(userInfo.username);
       const mediaArray = businessInfo.media?.data || [];
-      const {email} = req.oidc.user;
+      const { email } = req.oidc.user;
+
       if (!email) {
         throw new apiError(STATUS_CODES.UNAUTHORIZED, 'Email not found in user info');
       }
+
       const metrics = calculateMetrics(businessInfo);
       const instagramDataObject = createInstagramDataObject(businessInfo, mediaArray, metrics);
-      let existingData = await InstagramData.findOne({'data.username': userInfo.username});
+
       if (existingData) {
         existingData.data = instagramDataObject.data;
         await existingData.save();
       } else {
-        existingData = new InstagramData(instagramDataObject);
-        await existingData.save();
+        const newInstagramData = new InstagramData(instagramDataObject);
+        await newInstagramData.save();
+        existingData = newInstagramData;
       }
+
       await User.findOneAndUpdate(
-        {email},
-        {instaData: existingData._id, isTemporary: false, expiresAt: null},
-        {new: true}
+        { email },
+        { instaData: existingData._id, isTemporary: false, expiresAt: null },
+        { new: true }
       );
+
       res.render('instagramAuthResult', {
         accessToken,
         userInfo,
-        businessInfo: {...businessInfo, media: mediaArray},
-        error: null
+        businessInfo: { ...businessInfo, media: mediaArray },
+        error: null,
+        alreadyAuthorized: false
       });
     } catch (error) {
       res.render('instagramAuthResult', {
         accessToken: null,
         userInfo: null,
-        businessInfo: {media: []},
-        error: 'Error fetching data. Please try again.'
+        businessInfo: { media: [] },
+        error: 'Error fetching data. Please try again.',
+        alreadyAuthorized: false
       });
     }
   } else {
     res.render('instagramAuthResult', {
       accessToken: null,
       userInfo: null,
-      businessInfo: {media: []},
-      error: 'Authentication failed. No code provided.'
+      businessInfo: { media: [] },
+      error: 'Authentication failed. No code provided.',
+      alreadyAuthorized: false
     });
   }
 };
+
+
 
 export const getAuthInstaCode = asyncHandler(async (req, res) => {
   try {
@@ -130,13 +157,10 @@ export const fetchAndLinkData = async (req, res, next) => {
   }
 
   try {
-    // Always fetch the latest data from Instagram
     const businessInfo = await getBusinessDiscovery(username);
     const metrics = calculateMetrics(businessInfo);
     const mediaData = businessInfo.media?.data || [];
     const instagramDataObject = createInstagramDataObject(businessInfo, mediaData, metrics);
-
-    // Check if the data already exists in the database
     const existingData = await InstagramData.findOne({'data.username': username});
 
     if (existingData) {

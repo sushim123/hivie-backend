@@ -168,7 +168,7 @@ export const addOrUpdateSizeOfCompany = async (req, res) => {
     const updateResult = await handleUpdate(res, userId, 'sizeOfCompany', sizeOfCompany, 'sizeOfCompany');
 
     if (updateResult.success) {
-      return res.redirect('brand-info');
+      return res.redirect('profile');
     } else {
       return res.render('updateSizeOfCompany', {
         successMessage: null,
