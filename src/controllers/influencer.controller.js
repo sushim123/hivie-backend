@@ -28,11 +28,6 @@ export const fetchInfluencerAuthenticationAccessToken = async (req, res, next) =
   }
 };
 
-export const loginInfluencer = async (req, res) => {
-  res.oidc.login({
-    returnTo: '/api/v1/brand/industry'
-  });
-};
 export const fetchProfileOfInfluencer = async (req, res, next) => {
   try {
     const user = req.oidc.user;
