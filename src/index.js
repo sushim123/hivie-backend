@@ -27,7 +27,6 @@ app.use(express.urlencoded({extended: true}));
 app.use(express.static('public'));
 app.use(session({secret: process.env.SECRET, resave: false, saveUninitialized: false}));
 app.use(auth(OAUTH_CONFIG));
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -46,6 +45,7 @@ import usersRoutes from './routes/user.route.js';
 // import { pricingRoutes } from './routes/price.route.js';
 
 app.use('/', influencerRoute);
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 app.use('/api/v1/user', usersRoutes);
 app.use('/api/v1/brand', brandAuthRoutes);
 app.use('/api/v1/insta', instaRoutes);
