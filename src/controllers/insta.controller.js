@@ -94,7 +94,6 @@ export const fetchDataByInstaAuth = async (req, res) => {
 };
 
 
-
 export const getAuthInstaCode = asyncHandler(async (req, res) => {
   try {
     const params = new URLSearchParams(INSTA_CODE_PARAMS);

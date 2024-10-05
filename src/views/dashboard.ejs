@@ -4,49 +4,173 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>User Dashboard</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #ff6f61, #6a11cb, #2575fc, #8e44ad);
+            background-size: 400% 400%;
+            animation: gradientAnimation 15s ease infinite;
+            margin: 0;
+            padding: 20px;
+            color: #333;
+        }
+
+        @keyframes gradientAnimation {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #fff;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .dashboard-container {
+            max-width: 600px;
+            margin: auto;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+            padding: 20px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .dashboard-container:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+            transition: transform 0.3s ease;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border: 1px solid #ddd;
+            transition: background-color 0.3s ease;
+        }
+
+        th {
+            background: #f7f7f7;
+            color: #333;
+        }
+
+        tr:hover {
+            background-color: rgba(255, 204, 0, 0.5); /* Hover effect for rows */
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 5px;
+            background: linear-gradient(45deg, #ff6f61, #28a745, #007bff, #8e44ad);
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background 0.5s ease, transform 0.2s ease;
+            background-size: 400% 400%;
+            animation: buttonAnimation 15s ease infinite;
+        }
+
+        @keyframes buttonAnimation {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        button:hover {
+            transform: scale(1.05);
+            background: rgba(255, 255, 255, 0.1); /* Lighten background on hover */
+        }
+
+        .json-data {
+            white-space: pre-wrap;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background: rgba(240, 248, 255, 0.9);
+            overflow-x: auto;
+            font-family: 'Courier New', Courier, monospace;
+        }
+
+        .info-title {
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #444;
+            border-bottom: 2px solid #28a745;
+            padding-bottom: 5px;
+        }
+    </style>
 </head>
 <body>
     <h2>User Dashboard</h2>
-
-    <div>
-        <strong>Nickname:</strong> <%= user.nickname %><br>
-        <strong>Name:</strong> <%= user.name || 'N/A' %><br>
-        <strong>Email:</strong> <%= user.email %><br>
-        <strong>Role:</strong> <%= user.role %><br>
-        <strong>Picture:</strong> <img src="<%= user.picture %>" alt="Profile Picture" style="max-width: 100px;"><br>
-        <strong>Instagram Data:</strong> <%= user.instaData ? JSON.stringify(user.instaData) : 'N/A' %><br>
-        <strong>Platform Links:</strong>
-        <ul>
-            <% if (user.platformLinks && user.platformLinks.length > 0) { %>
-                <% user.platformLinks.forEach(link => { %>
-                    <li>
-                        <strong>Email:</strong> <%= link.email %><br>
-                        <strong>YouTube:</strong> <%= link.youtube || 'N/A' %><br>
-                        <strong>TikTok:</strong> <%= link.tiktok || 'N/A' %><br>
-                        <strong>LinkedIn:</strong> <%= link.linkedin || 'N/A' %><br>
-                        <strong>Discord:</strong> <%= link.discord || 'N/A' %>
-                    </li>
-                <% }); %>
-            <% } else { %>
-                <li>No platform links available.</li>
-            <% } %>
-        </ul>
-        <strong>Pricing Information:</strong>
-        <ul>
-            <% if (user.pricing && user.pricing.length > 0) { %>
-                <% user.pricing.forEach(pricing => { %>
-                    <li>
-                        <strong>Post Price:</strong> <%= pricing.postPrice %><br>
-                        <strong>Reel Price:</strong> <%= pricing.reelPrice %><br>
-                        <strong>Brand Range:</strong> <%= pricing.brandRange %>
-                    </li>
-                <% }); %>
-            <% } else { %>
-                <li>No pricing information available.</li>
-            <% } %>
-        </ul>
-    </div>
-    <div >
+    <div class="dashboard-container">
+        <div class="user-info">
+            <div class="info-title">User Information:</div>
+            <table>
+                <tr><th>Nickname</th><td><%= user.nickname %></td></tr>
+                <tr><th>Name</th><td><%= user.name || 'N/A' %></td></tr>
+                <tr><th>Email</th><td><%= user.email %></td></tr>
+                <tr><th>Role</th><td><%= user.role %></td></tr>
+                <tr><th>Picture</th><td><img src="<%= user.picture %>" alt="Profile Picture" style="max-width: 100px; border-radius: 50%;"></td></tr>
+            </table>
+        </div>
+        <div class="instagram-data">
+            <div class="info-title">Instagram Data:</div>
+            <div class="json-data"><%= user.instaData ? JSON.stringify(user.instaData, null, 2) : 'N/A' %></div>
+        </div>
+        <div class="platform-links">
+            <div class="info-title">Platform Links:</div>
+            <table>
+                <thead>
+                    <tr><th>Email</th><th>YouTube</th><th>TikTok</th><th>LinkedIn</th><th>Discord</th></tr>
+                </thead>
+                <tbody>
+                    <% if (user.platformLinks && user.platformLinks.length) { %>
+                        <% user.platformLinks.forEach(link => { %>
+                            <tr>
+                                <td><%= link.email %></td>
+                                <td><%= link.youtube || 'N/A' %></td>
+                                <td><%= link.tiktok || 'N/A' %></td>
+                                <td><%= link.linkedin || 'N/A' %></td>
+                                <td><%= link.discord || 'N/A' %></td>
+                            </tr>
+                        <% }); %>
+                    <% } else { %>
+                        <tr><td colspan="5">No platform links available.</td></tr>
+                    <% } %>
+                </tbody>
+            </table>
+        </div>
+        <div class="pricing-info">
+            <div class="info-title">Pricing Information:</div>
+            <table>
+                <thead>
+                    <tr><th>Post Price</th><th>Reel Price</th><th>Brand Range</th></tr>
+                </thead>
+                <tbody>
+                    <% if (user.pricing && user.pricing.length) { %>
+                        <% user.pricing.forEach(pricing => { %>
+                            <tr>
+                                <td><%= pricing.postPrice %></td>
+                                <td><%= pricing.reelPrice %></td>
+                                <td><%= pricing.brandRange %></td>
+                            </tr>
+                        <% }); %>
+                    <% } else { %>
+                        <tr><td colspan="3">No pricing information available.</td></tr>
+                    <% } %>
+                </tbody>
+            </table>
+        </div>
         <button onclick="window.location.href='/'">Return to Home</button>
     </div>
 </body>

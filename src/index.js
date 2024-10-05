@@ -11,7 +11,8 @@ import {fileURLToPath} from 'url';
 import './configs/db.config.js';
 import {OAUTH_CONFIG} from './configs/global.config.js';
 import {errorHandler, notFoundError} from './middlewares/error.middleware.js';
-
+import swaggerSpec from './swaggerConfig.js';
+import swaggerUi from 'swagger-ui-express';
 dotenv.config({path: './.env'});
 
 const app = express();
@@ -26,6 +27,7 @@ app.use(express.urlencoded({extended: true}));
 app.use(express.static('public'));
 app.use(session({secret: process.env.SECRET, resave: false, saveUninitialized: false}));
 app.use(auth(OAUTH_CONFIG));
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
