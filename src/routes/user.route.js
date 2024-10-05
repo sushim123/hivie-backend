@@ -15,21 +15,20 @@ const router = Router();
 // router.post('/user', asyncHandler(createUser));
 router.get('/blank', (req, res) => {
   res.render('platformLinks', {
-    errorMessage:null,
+    errorMessage: null,
     platformLinks: [],
     successMessage: null
   });
 });
-router.get('/dashboard', isAuthenticated , asyncHandler(dashboard));
+router.get('/dashboard', isAuthenticated, asyncHandler(dashboard));
 router.get('/', isAuthenticated, isAdmin, asyncHandler(fetchAllUser));
 router.get('/:id', isAuthenticated, isInfluencer, asyncHandler(fetchById));
 router.put('/:id', isAuthenticated, isInfluencer, asyncHandler(updateUser));
 router.delete('/:id', isAuthenticated, isAdmin, asyncHandler(deleteUser));
 router.get('/score/:id', isAuthenticated, asyncHandler(calculateDigitalScore));
 // user charges per post and reel
-router.post('/submit-pricing', submitPricing);
-router.get('/submit-pricing/:id', asyncHandler(fetchById));
-router.post('/highlights', createPlatformLinks);
-router.get('/highlights/:userId', fetchPlatformLinks);
+router.post('/submit-pricing', isAuthenticated, asyncHandler(submitPricing));
+router.post('/highlights', asyncHandler(createPlatformLinks));
+router.get('/highlights/:userId',isAuthenticated, asyncHandler (fetchPlatformLinks));
 
 export default router;

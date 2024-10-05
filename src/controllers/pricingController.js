@@ -24,6 +24,12 @@ export const submitPricing = async (req, res, next) => {
       .json(new apiResponse( STATUS_CODES.NOT_FOUND,'User not found'
       ));
     }
+    if (user.isTemporary) {
+      return res
+        .status(STATUS_CODES.BAD_REQUEST)
+        .json(new apiResponse(STATUS_CODES.BAD_REQUEST, 'User has not completed authorization.'));
+    }
+
   const pricingData = { postPrice, reelPrice, brandRange };
   const pricingIndex = user.pricing.findIndex(pricing => pricing.brandRange === brandRange);
     if (pricingIndex !== -1) {

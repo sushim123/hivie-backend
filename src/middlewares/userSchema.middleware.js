@@ -1,11 +1,12 @@
-// userMiddleware.js
-
 export const preSaveMiddleware = function (next) {
+  if (this.isModified('role')) {
     if (this.role === 'brand') {
       // Remove platformLinks and pricing for brands
       this.platformLinks = undefined;
       this.pricing = undefined;
       this.instaData = undefined;
+      this.isTemporary = false;
+      this.expiresAt = null;
     }
     if (this.role === 'influencer') {
       // Ensure expiresAt is set only for influencers
@@ -15,17 +16,15 @@ export const preSaveMiddleware = function (next) {
       this.numberOfProducts = undefined;
       this.sizeOfCompany = undefined;
       this.brandInfo = undefined;
-
-    } else {
-      // For brands
-      this.isTemporary = false;
-      this.expiresAt = null;
     }
-    next();
-  };
+  }
+  next();
+};
 
-  export const preFindOneAndUpdateMiddleware = function (next) {
-    const update = this.getUpdate();
+export const preFindOneAndUpdateMiddleware = function (next) {
+  const update = this.getUpdate();
+
+  if (update.role) {
     if (update.role === 'brand') {
       update.platformLinks = undefined;
       update.pricing = undefined;
@@ -34,11 +33,13 @@ export const preSaveMiddleware = function (next) {
       update.expiresAt = null;
     } else if (update.role === 'influencer') {
       update.isTemporary = true;
-      update.expiresAt = new Date(Date.now() + 1 * 60 * 1000);
+      update.expiresAt = new Date(Date.now() + 1 * 60 * 1000); 
       update.industry = undefined;
       update.numberOfProducts = undefined;
       update.sizeOfCompany = undefined;
       update.brandInfo = undefined;
     }
-    next();
-  };
+  }
+
+  next();
+};

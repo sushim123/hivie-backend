@@ -67,7 +67,6 @@
 
 
 
-
 /**
  * @swagger
  * /api/v1/insta/auth:
@@ -249,4 +248,195 @@
  *                   message:
  *                     type: string
  *                     example: "Please provide a username."
+ */
+
+
+//////////submitting pricing for influencer
+
+/**
+ * @swagger
+ * /api/v1/user/submit-pricing:
+ *   post:
+ *     summary: Submit or update pricing details for a user
+ *     description: This endpoint allows you to submit or update pricing details for a specific user, including postPrice, reelPrice, and brandRange. The brand range must be one of the predefined values.
+ *     tags:
+ *       - Influencer pricing and Platform Links
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 description: Email of the user
+ *                 example: user@example.com
+ *               postPrice:
+ *                 type: number
+ *                 description: Price for a post
+ *                 example: 500
+ *               reelPrice:
+ *                 type: number
+ *                 description: Price for a reel
+ *                 example: 600
+ *               brandRange:
+ *                 type: integer
+ *                 description: Collaboration range for the brand. Must be between 1 and 10.
+ *                 example: 3
+ *             required:
+ *               - email
+ *               - postPrice
+ *               - reelPrice
+ *               - brandRange
+ *     responses:
+ *       200:
+ *         description: Pricing updated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: integer
+ *                   example: 200
+ *                 message:
+ *                   type: string
+ *                   example: Pricing updated successfully
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     postPrice:
+ *                       type: number
+ *                       example: 500
+ *                     reelPrice:
+ *                       type: number
+ *                       example: 600
+ *                     brandRange:
+ *                       type: integer
+ *                       example: 3
+ *       400:
+ *         description: Invalid input or user authorization not completed
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: integer
+ *                   example: 400
+ *                 message:
+ *                   type: string
+ *                   example: Post price and reel price must be numbers or User has not completed authorization.
+ *       404:
+ *         description: User not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: integer
+ *                   example: 404
+ *                 message:
+ *                   type: string
+ *                   example: User not found.
+ *       500:
+ *         description: Server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: integer
+ *                   example: 500
+ *                 message:
+ *                   type: string
+ *                   example: Failed to update pricing.
+ *     security:
+ *       - bearer: []
+ */
+
+//////////submitting highlights for influencer
+
+/**
+ * @swagger
+ * /api/v1/user/highlights:
+ *   post:
+ *     summary: Create or update platform links for a user
+ *     description: This endpoint allows the creation or updating of platform links such as YouTube, TikTok, LinkedIn, and Discord for a user. The email is required to identify the user.
+ *     tags:
+ *       - Influencer pricing and Platform Links
+ *     security:
+ *       - bearer: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 description: The email of the user
+ *                 example: user@example.com
+ *               youtube:
+ *                 type: string
+ *                 description: The YouTube profile link
+ *                 example: https://youtube.com/user/example
+ *               tiktok:
+ *                 type: string
+ *                 description: The TikTok profile link
+ *                 example: https://tiktok.com/@example
+ *               linkedin:
+ *                 type: string
+ *                 description: The LinkedIn profile link
+ *                 example: https://linkedin.com/in/example
+ *               discord:
+ *                 type: string
+ *                 description: The Discord profile link
+ *                 example: https://discord.gg/example
+ *     responses:
+ *       302:
+ *         description: Platform links updated successfully, redirecting to dashboard
+ *         headers:
+ *           Location:
+ *             description: Redirect URL
+ *             schema:
+ *               type: string
+ *               example: /api/v1/user/dashboard
+ *       400:
+ *         description: Email is required or invalid request body
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Email is required
+ *       404:
+ *         description: User not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: User not found
+ *       500:
+ *         description: Server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Server error
+ *                 error:
+ *                   type: string
+ *                   example: error details
  */
