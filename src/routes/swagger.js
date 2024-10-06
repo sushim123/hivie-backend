@@ -311,7 +311,7 @@
  *                       type: number
  *     responses:
  *       201:
- *         description: Order created successfully
+ *         description: Order has been created successfully
  *       400:
  *         description: Missing required fields
  *       500:
