@@ -42,12 +42,14 @@ import eCommerceRoutes from './routes/eCommerce.route.js';
 import influencerRoute from './routes/influencer.route.js';
 import instaRoutes from './routes/insta.routes.js';
 import usersRoutes from './routes/user.route.js';
+import influAuthRoutes from './routes/influAuth.route.js'
 // import { pricingRoutes } from './routes/price.route.js';
 
 app.use('/', influencerRoute);
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+app.use('/api/v1/i', influAuthRoutes);
+app.use('/api/v1/b', brandAuthRoutes);
 app.use('/api/v1/user', usersRoutes);
-app.use('/api/v1/brand', brandAuthRoutes);
 app.use('/api/v1/insta', instaRoutes);
 app.use('/api/v1/drops', dropRoutes);
 app.use('/api/v1/drop-link', dropLinkRoutes);

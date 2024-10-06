@@ -18,7 +18,7 @@
 // Route to log in
 /**
  * @swagger
- * /login:
+ * /api/login:
  *   get:
  *     summary: Log in
  *     tags: [Influencer]
