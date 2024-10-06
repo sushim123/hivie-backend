@@ -51,4 +51,5 @@ router.get('/product', isAuthenticated, asyncHandler(fetchAllProducts));
 router.post('/category', isAuthenticated, asyncHandler(addCategoryName));
 router.get('/category', isAuthenticated,asyncHandler(fetchAllCategory));
 router.get('/category/:id', isAuthenticated, asyncHandler(fetchCategoryById));
+
 export default router;
