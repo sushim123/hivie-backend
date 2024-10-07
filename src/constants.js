@@ -82,3 +82,4 @@ export const SCORE_WEIGHT = {// must sum to 1
   CONTENT_CONSISTENCY: 0.15,
   CONTENT_QUALITY: 0.15
 };
+export default STATUS_CODES;

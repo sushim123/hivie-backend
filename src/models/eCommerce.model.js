@@ -102,3 +102,4 @@ const CartItem = mongoose.model('CartItem', cartItemSchema);
 
 // Export all models
 export {Address, Cart, CartItem, Category, FlashSale, Order, OrderItem, Product};
+export default Category;
