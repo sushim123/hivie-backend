@@ -2,54 +2,41 @@ import STATUS_CODES from './constants.js';
 import {addCategoryName, addProduct} from './controllers/eCommerce.controller.js';
 import {Category, Product} from './models/eCommerce.model.js';
 
-// adding product to eccomerce
 jest.mock('./models/eCommerce.model.js');
-describe('addProduct', () => {
-  let req, res;
-  beforeEach(() => {
-    req = {body: {}};
-    res = {status: jest.fn().mockReturnThis(), json: jest.fn()};
-  });
-  it('should create a product successfully', async () => {
-    req.body = {
-      category_id: 'id',
+const sushim ={
+  category_id: '1',
       name: 'Test sushim',
       price: '100',
       stock_quantity: '1',
       image_url: 'dsff',
       is_flash_sale: 'yes',
       description: 'Test Description'
-    };
+}
+// adding product to eccomerce
+describe('addProduct', () => {
+  let req, res;
+  beforeEach(() => {
+    req = {body: sushim};
+    res = {status: jest.fn().mockReturnThis(), json: jest.fn()};
+  });
+
+  it('should create a product successfully', async () => {
+
     const mockProdusctInstance = {
-      category_id: '1',
-      name: 'Test sushim',
-      price: '100',
-      stock_quantity: '1',
-      image_url: 'dsff',
-      is_flash_sale: 'yes',
-      description: 'Test Description',
+      ...sushim,
       created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString()
+      updated_at: new Date().toISOString(),
+      save: jest.fn().mockResolvedValue(this)
       // Ensure it resolves correctly
     };
-    mockProdusctInstance.save = jest.fn().mockResolvedValue(mockProdusctInstance);
     Product.mockImplementation(() => mockProdusctInstance);
     await addProduct(req, res);
     expect(res.status).toHaveBeenCalledWith(STATUS_CODES.CREATED);
     expect(res.json).toHaveBeenCalledWith(
       expect.objectContaining({
-        category_id: '1',
-        name: 'Test sushim',
-        price: '100',
-        stock_quantity: '1',
-        image_url: 'dsff',
-        is_flash_sale: 'yes',
-        description: 'Test Description',
-        created_at: expect.any(String), // Use expect.any to allow for dynamic dates
-        updated_at: expect.any(String) // Use expect.any to allow for dynamic dates
-        // Match ISO date format
-        // Set to the current time
-        // Use expect.any to allow for dynamic dates
+        ...mockProdusctInstance,
+        created_at: expect.any(String),
+        updated_at: expect.any(String)
       })
     );
   });
@@ -72,9 +59,9 @@ describe('addCategoryName', () => {
       description: 'Test Description'
     };
     const mockCategoryInstance = {
-      _id: '1',
-      name: 'Test Category',
-      description: 'Test Description',
+      _id: sushim.category_id,
+      ...sushim.name,
+      ...sushim.description,
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),
       save: jest.fn().mockResolvedValue(this) // Ensure it resolves correctly
@@ -84,9 +71,7 @@ describe('addCategoryName', () => {
     expect(res.status).toHaveBeenCalledWith(STATUS_CODES.CREATED);
     expect(res.json).toHaveBeenCalledWith(
       expect.objectContaining({
-        _id: '1',
-        name: 'Test Category',
-        description: 'Test Description',
+        ...mockCategoryInstance,
         created_at: expect.any(String),
         updated_at: expect.any(String)
       })
