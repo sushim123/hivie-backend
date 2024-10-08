@@ -42,14 +42,9 @@
     function influencerLogout() {
       location.href = '/logout';
     }
-
-    function influencerProfile() {
-      location.href = '/profile'; // Update with the actual profile route if different
-    }
-
     // Brand login/logout/profile routes
     function brandLogin() {
-      location.href = '/api/v1/brand/login';
+      location.href = '/api/v1/b/login';
     }
 
     function brandLogout() {
@@ -69,7 +64,6 @@
     <h3>Influencer Actions</h3>
     <button onclick="influencerLogin()">Login</button>
     <button onclick="influencerLogout()">Logout</button>
-    <button onclick="influencerProfile()">Profile</button>
   </div>
 
   <div id="brand-section" style="display: none;">
