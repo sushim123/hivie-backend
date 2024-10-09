@@ -1,9 +1,9 @@
 import STATUS_CODES from './constants.js';
-import {addCategoryName, addProduct} from './controllers/eCommerce.controller.js';
-import {Category, Product} from './models/eCommerce.model.js';
+import {addCategoryName, addProduct , addFlashSaleProduct} from './controllers/eCommerce.controller.js';
+import {Category, FlashSale, Product} from './models/eCommerce.model.js';
 
 jest.mock('./models/eCommerce.model.js');
-const sushim ={
+const product ={
   category_id: '1',
       name: 'Test sushim',
       price: '100',
@@ -16,14 +16,14 @@ const sushim ={
 describe('addProduct', () => {
   let req, res;
   beforeEach(() => {
-    req = {body: sushim};
+    req = {body: product};
     res = {status: jest.fn().mockReturnThis(), json: jest.fn()};
   });
 
   it('should create a product successfully', async () => {
 
     const mockProdusctInstance = {
-      ...sushim,
+      ...product,
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),
       save: jest.fn().mockResolvedValue(this)
@@ -59,9 +59,9 @@ describe('addCategoryName', () => {
       description: 'Test Description'
     };
     const mockCategoryInstance = {
-      _id: sushim.category_id,
-      ...sushim.name,
-      ...sushim.description,
+      _id: product.category_id,
+      ...product.name,
+      ...product.description,
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),
       save: jest.fn().mockResolvedValue(this) // Ensure it resolves correctly
@@ -76,5 +76,41 @@ describe('addCategoryName', () => {
         updated_at: expect.any(String)
       })
     );
+  });
+});
+
+jest.mock('./models/eCommerce.model.js');
+
+describe('addFlashSaleProduct', () => {
+  let req, res;
+  beforeEach(() => {
+    req = { body: {} };
+    res = {
+      status: jest.fn().mockReturnThis(),
+      json: jest.fn(),
+    };
+  });
+
+  it('should create a flash sale product successfully', async () => {
+    const mockFlashSale = {
+      product_id: '1',
+      discount_percentage: 10,
+      start_time: new Date().toISOString(),
+      end_time: new Date().toISOString(),
+      save: jest.fn().mockResolvedValue(this),
+    };
+
+    FlashSale.mockImplementation(() => mockFlashSale);
+
+    req.body = {
+      product_id:mockFlashSale.product_id,
+      discount_percentage: mockFlashSale.discount_percentage,
+      start_time: new Date().toISOString(),
+      end_time: new Date().toISOString(),
+    };
+
+    await addFlashSaleProduct(req, res);
+    expect(res.status).toHaveBeenCalledWith(STATUS_CODES.CREATED);
+    expect(res.json).toHaveBeenCalledWith(mockFlashSale);
   });
 });
